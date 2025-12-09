@@ -1,0 +1,3 @@
+Tablas de formulas de fisica de codigo latex (simbolos raros) a pdfs para estudio / imprimir 
+
+para abrir deben ingresar a dist -> y al .exe donde abrira la aplicacion automaticamente
