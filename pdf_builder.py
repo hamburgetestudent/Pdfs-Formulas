@@ -130,7 +130,7 @@ def generate_pdf(data_frame_or_sections, output_filename="formulas.pdf"):
                 formula_cell = str(formula_latex) # Fallback
 
             # Wrap text content
-            def to_paragraph(text):
+            def to_paragraph(text, pre_escaped=False):
                 # We do cleaning BEFORE escaping specifically for our custom tags,
                 # but wait, if we insert <sup> it will be escaped if we escape after.
                 # So verify safety vs utility. 
@@ -146,9 +146,13 @@ def generate_pdf(data_frame_or_sections, output_filename="formulas.pdf"):
                 if not text: return Paragraph("", cell_style)
                 
                 txt_str = str(text)
-                # 1. Escape HTML special chars appearing in raw text FIRST
-                # (except we don't assume raw text has intentional HTML)
-                safe_text = html.escape(txt_str) 
+
+                if pre_escaped:
+                    safe_text = txt_str
+                else:
+                    # 1. Escape HTML special chars appearing in raw text FIRST
+                    # (except we don't assume raw text has intentional HTML)
+                    safe_text = html.escape(txt_str)
                 
                 # 2. Now apply LaTeX replacements which introduce SAFE html tags
                 safe_text = clean_latex(safe_text)
@@ -164,6 +168,7 @@ def generate_pdf(data_frame_or_sections, output_filename="formulas.pdf"):
             
             # Variables / Description
             val_vars = row.get('Variables', '')
+            is_constructed = False
             if not val_vars:
                 # Construct from new columns
                 parts = []
@@ -171,14 +176,19 @@ def generate_pdf(data_frame_or_sections, output_filename="formulas.pdf"):
                 # Formula en Texto
                 txt_formula = row.get('Fórmula en Texto') or row.get('Formula en Texto')
                 if pd.notna(txt_formula):
-                    parts.append(f"<b>Fórmula:</b> {txt_formula}")
+                    # Escape content before adding markup
+                    safe_formula = html.escape(str(txt_formula))
+                    parts.append(f"<b>Fórmula:</b> {safe_formula}")
 
                 # Dato Relevante
                 dato = row.get('Dato Relevante / Uso')
                 if pd.notna(dato):
-                    parts.append(f"<b>Uso:</b> {dato}")
+                    # Escape content before adding markup
+                    safe_dato = html.escape(str(dato))
+                    parts.append(f"<b>Uso:</b> {safe_dato}")
                 
                 val_vars = "\n".join(parts)
+                is_constructed = True
             
             # Units
             val_units = row.get('Unidad (SI)', row.get('Unidades (SI)', row.get('Simbolo', '')))
@@ -186,7 +196,7 @@ def generate_pdf(data_frame_or_sections, output_filename="formulas.pdf"):
             row_data = [
                 to_paragraph(val_concepto),
                 formula_cell,
-                to_paragraph(val_vars),
+                to_paragraph(val_vars, pre_escaped=is_constructed),
                 to_paragraph(val_units)
             ]
             table_data.append(row_data)
