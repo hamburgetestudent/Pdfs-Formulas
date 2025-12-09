@@ -5,16 +5,16 @@ from reportlab.lib import colors
 from reportlab.lib.units import inch
 from renderer import render_formula_to_image
 import io
-import pandas as pd
-
 import html
+
+def notna(val):
+    return val is not None and str(val).strip() != "" and str(val).lower() != "nan"
 
 def generate_pdf(data_frame_or_sections, output_filename="formulas.pdf"):
     """
     Generates a PDF from formula data.
     Input can be:
-    - A pandas DataFrame (backwards compatibility)
-    - A list of dicts: [{'title': 'Section Name', 'df': DataFrame}, ...]
+    - A list of dicts: [{'title': 'Section Name', 'rows': [dict, ...]}, ...]
     """
     doc = SimpleDocTemplate(output_filename, pagesize=landscape(letter))
     elements = []
@@ -32,11 +32,21 @@ def generate_pdf(data_frame_or_sections, output_filename="formulas.pdf"):
     h1_style.alignment = 1 # Center
 
     # Normalize input to list of sections
-    if hasattr(data_frame_or_sections, 'iterrows'):
-        # It's a DataFrame
-        sections = [{'title': '', 'df': data_frame_or_sections}]
+    if isinstance(data_frame_or_sections, list) and len(data_frame_or_sections) > 0:
+        if 'rows' not in data_frame_or_sections[0] and 'title' not in data_frame_or_sections[0]:
+             # Legacy support for just a list of rows? Or assume it's the new format
+             # If it was a dataframe passed, we can't handle it anymore without pandas.
+             # But we assume the caller is main.py which is updated.
+             # If it's a list of dicts (flat), wrap it
+             if isinstance(data_frame_or_sections[0], dict):
+                  sections = [{'title': '', 'rows': data_frame_or_sections}]
+             else:
+                  sections = data_frame_or_sections
+        else:
+             sections = data_frame_or_sections
     else:
-        sections = data_frame_or_sections
+        # Fallback empty
+        sections = []
 
     headers = ["Concepto", "Fórmula", "Variables", "Unidades (SI)"]
     
@@ -100,7 +110,7 @@ def generate_pdf(data_frame_or_sections, output_filename="formulas.pdf"):
 
     for i, section in enumerate(sections):
         title = section.get('title', '')
-        df = section['df']
+        rows = section.get('rows', []) # Changed from df to rows
         
         if title:
             elements.append(Paragraph(html.escape(title), h1_style))
@@ -108,7 +118,7 @@ def generate_pdf(data_frame_or_sections, output_filename="formulas.pdf"):
 
         table_data = [headers]
 
-        for index, row in df.iterrows():
+        for row in rows:
             # Determine formula content first
             formula_latex = row.get('Fórmula Simbólica', row.get('Fórmula', row.get('Formula Simbólica', '')))
             
@@ -131,18 +141,6 @@ def generate_pdf(data_frame_or_sections, output_filename="formulas.pdf"):
 
             # Wrap text content
             def to_paragraph(text, pre_escaped=False):
-                # We do cleaning BEFORE escaping specifically for our custom tags,
-                # but wait, if we insert <sup> it will be escaped if we escape after.
-                # So verify safety vs utility. 
-                # Better approach: Escape first, then apply markup/latex fixes?
-                # No, because LaTeX might contain characters we want to map to HTML.
-                # Safe flow: 
-                # 1. Clean LaTeX -> inserts HTML tags (sup, sub) and unicode.
-                # 2. Escape other chars? if we escape now we break the tags we just inserted.
-                # So we must be careful.
-                # Let's trust clean_latex output is generally safe or specific.
-                # But the input might have < > that we want to escape.
-                
                 if not text: return Paragraph("", cell_style)
                 
                 txt_str = str(text)
@@ -150,14 +148,9 @@ def generate_pdf(data_frame_or_sections, output_filename="formulas.pdf"):
                 if pre_escaped:
                     safe_text = txt_str
                 else:
-                    # 1. Escape HTML special chars appearing in raw text FIRST
-                    # (except we don't assume raw text has intentional HTML)
                     safe_text = html.escape(txt_str)
                 
-                # 2. Now apply LaTeX replacements which introduce SAFE html tags
                 safe_text = clean_latex(safe_text)
-                
-                # 3. Handle newlines
                 safe_text = safe_text.replace('\n', '<br/>')
                 
                 return Paragraph(safe_text, cell_style)
@@ -175,14 +168,14 @@ def generate_pdf(data_frame_or_sections, output_filename="formulas.pdf"):
                 
                 # Formula en Texto
                 txt_formula = row.get('Fórmula en Texto') or row.get('Formula en Texto')
-                if pd.notna(txt_formula):
+                if notna(txt_formula):
                     # Escape content before adding markup
                     safe_formula = html.escape(str(txt_formula))
                     parts.append(f"<b>Fórmula:</b> {safe_formula}")
-
+                
                 # Dato Relevante
                 dato = row.get('Dato Relevante / Uso')
-                if pd.notna(dato):
+                if notna(dato):
                     # Escape content before adding markup
                     safe_dato = html.escape(str(dato))
                     parts.append(f"<b>Uso:</b> {safe_dato}")

@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox, filedialog
 import customtkinter as ctk
-import pandas as pd
+
 import io
 import os
 from pdf_builder import generate_pdf
@@ -62,7 +62,8 @@ class FormulaApp:
 
     def parse_input(self, text):
         """
-        Parses text input into either a DataFrame (legacy) or list of sections.
+        Parses text input into a list of sections.
+        Returns: [{'title': 'Section Name', 'rows': [dict, dict, ...]}, ...]
         """
         text = text.strip()
         data = []
@@ -70,7 +71,6 @@ class FormulaApp:
         # Check for Markdown headers indicating sections
         if "###" in text and "|" in text:
             # New format: Markdown sections + tables
-            # Split by lines
             lines = text.split('\n')
             current_section = {'title': '', 'rows': []}
             headers = []
@@ -83,8 +83,9 @@ class FormulaApp:
                 if line.startswith('###'):
                     # Save previous section if exists
                     if current_section['rows'] and headers:
-                        df = pd.DataFrame(current_section['rows'], columns=headers)
-                        data.append({'title': current_section['title'], 'df': df})
+                        # Convert rows (lists) to dicts
+                        rows_as_dicts = [dict(zip(headers, r)) for r in current_section['rows']]
+                        data.append({'title': current_section['title'], 'rows': rows_as_dicts})
                     
                     # Start new section
                     title = line.replace('###', '').strip()
@@ -93,7 +94,6 @@ class FormulaApp:
                 
                 elif line.startswith('|'):
                     # Table row
-                    # Split by | and remove first/last empty strings
                     parts = [p.strip() for p in line.split('|')]
                     # Filter out empty strings from start/end if caused by | at edges
                     if len(parts) > 1 and parts[0] == '': parts.pop(0)
@@ -106,34 +106,31 @@ class FormulaApp:
                         headers = parts
                     else:
                         # Normalize row length to header length
-                        if len(parts) == len(headers):
-                            current_section['rows'].append(parts)
-                        else:
-                            # Handle mismatch if reasonable, or ignore/warn
-                            # For now try to fit
-                             if len(parts) < len(headers):
-                                 parts += [''] * (len(headers) - len(parts))
-                             elif len(parts) > len(headers):
-                                 parts = parts[:len(headers)]
-                             current_section['rows'].append(parts)
+                        if len(parts) < len(headers):
+                            parts += [''] * (len(headers) - len(parts))
+                        elif len(parts) > len(headers):
+                            parts = parts[:len(headers)]
+                        
+                        current_section['rows'].append(parts)
             
             # Append last section
             if current_section['rows'] and headers:
-                df = pd.DataFrame(current_section['rows'], columns=headers)
-                data.append({'title': current_section['title'], 'df': df})
-                
-            if not data:
-                # Fallback if parsing failed but looked like markdown
-                # Maybe just one table without header?
-                pass
+                rows_as_dicts = [dict(zip(headers, r)) for r in current_section['rows']]
+                data.append({'title': current_section['title'], 'rows': rows_as_dicts})
                 
         else:
             # Legacy CSV format
             # Using ; as separator as established
+            # Manually parse CSV
             try:
-                df = pd.read_csv(io.StringIO(text), sep=";")
-                data = df # Return simple DF
-            except:
+                import csv
+                f = io.StringIO(text)
+                reader = csv.DictReader(f, delimiter=';')
+                rows = list(reader)
+                if rows:
+                    data = [{'title': '', 'rows': rows}]
+            except Exception as e:
+                print(f"CSV Parsing error: {e}")
                 pass
 
         return data
