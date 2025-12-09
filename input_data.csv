@@ -1,0 +1,8 @@
+Concepto;Fórmula;Variables;Unidades (SI)
+Trabajo Mecánico (W);W=F \cdot d \cdot \cos(\theta);F: Fuerza, d: Desplazamiento, \theta: Ángulo entre fuerza y movimiento;Joules (J)
+Trabajo de Fricción (Wfr);W_{fr} = -f_k \cdot d;f_k: Fuerza de rozamiento cinético (El ángulo es 180^\circ, por eso es negativo);Joules (J)
+Trabajo Neto (Wneto);W_{neto} = \sum W;Suma de todos los trabajos individuales (W_1 + W_2 + \dots);Joules (J)
+Energía Cinética (K);K = \frac{1}{2} m v^2;m: Masa, v: Velocidad;Joules (J)
+Energía Potencial (Ug);U_g = m \cdot g \cdot h;g: Gravedad (9.8 m/s^2), h: Altura;Joules (J)
+Teorema W-K;W_{neto} = \Delta K;W_{neto} = K_{final} - K_{inicial};Joules (J)
+Potencia Mecánica (P);P = \frac{W}{\Delta t};W: Trabajo, t: Tiempo;Watts (W)
