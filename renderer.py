@@ -5,7 +5,18 @@ import io
 
 def render_formula_to_image(latex_string, fontsize=12, dpi=300):
     """
-    Renders a LaTeX string into a PNG image in-memory.
+    Renderiza una cadena LaTeX en una imagen PNG en memoria.
+
+    Esta función utiliza matplotlib para convertir una fórmula matemática descrita en LaTeX
+    en una imagen PNG con fondo transparente. La imagen se guarda en un buffer en memoria.
+
+    Args:
+        latex_string (str): La cadena que contiene la fórmula en formato LaTeX.
+        fontsize (int, opcional): El tamaño de fuente para la fórmula. Por defecto es 12.
+        dpi (int, opcional): Los puntos por pulgada (resolución) de la imagen generada. Por defecto es 300.
+
+    Returns:
+        io.BytesIO: Un buffer de bytes que contiene la imagen PNG generada, o None si ocurre un error durante el renderizado.
     """
     try:
         # Create a figure and axis

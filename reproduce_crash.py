@@ -1,3 +1,10 @@
+"""
+Script para reproducir fallos y probar componentes individualmente.
+
+Este script contiene datos de muestra y llamadas directas a las funciones principales
+de generación de PDF y renderizado de fórmulas para verificar su funcionamiento
+fuera del entorno de la interfaz gráfica.
+"""
 
 from pdf_builder import generate_pdf
 import os

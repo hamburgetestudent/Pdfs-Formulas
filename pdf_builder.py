@@ -8,13 +8,32 @@ import io
 import html
 
 def notna(val):
+    """
+    Verifica si un valor no es nulo, vacío o "nan" (Not a Number).
+
+    Args:
+        val (any): El valor a verificar. Puede ser de cualquier tipo, pero se convierte a cadena para la verificación.
+
+    Returns:
+        bool: True si el valor es válido (no es None, cadena vacía o "nan"), False en caso contrario.
+    """
     return val is not None and str(val).strip() != "" and str(val).lower() != "nan"
 
 def generate_pdf(data_frame_or_sections, output_filename="formulas.pdf"):
     """
-    Generates a PDF from formula data.
-    Input can be:
-    - A list of dicts: [{'title': 'Section Name', 'rows': [dict, ...]}, ...]
+    Genera un archivo PDF con tablas de fórmulas físicas a partir de los datos proporcionados.
+
+    Esta función toma una estructura de datos (lista de diccionarios o secciones) y crea un documento PDF
+    que contiene tablas formateadas con conceptos, fórmulas (renderizadas como imágenes), variables y unidades.
+
+    Args:
+        data_frame_or_sections (list): Una lista de diccionarios que representa las secciones y filas de datos.
+            El formato esperado es: [{'title': 'Nombre Sección', 'rows': [dict, ...]}, ...].
+            También acepta una lista plana de diccionarios (filas) que se tratarán como una única sección sin título.
+        output_filename (str, opcional): La ruta y nombre del archivo PDF de salida. Por defecto es "formulas.pdf".
+
+    Returns:
+        None: La función no retorna ningún valor, pero genera un archivo en el sistema de archivos.
     """
     doc = SimpleDocTemplate(output_filename, pagesize=landscape(letter))
     elements = []
@@ -71,6 +90,17 @@ def generate_pdf(data_frame_or_sections, output_filename="formulas.pdf"):
     # Common regex patterns for LaTeX replacements
     import re
     def clean_latex(text):
+        """
+        Limpia y formatea una cadena de texto LaTeX para su visualización en HTML/ReportLab.
+
+        Realiza reemplazos de símbolos comunes y etiquetas LaTeX por sus equivalentes Unicode o HTML.
+
+        Args:
+            text (str): El texto a limpiar.
+
+        Returns:
+            str: El texto limpio y formateado.
+        """
         if not isinstance(text, str): return str(text)
         # Simple replacements for Greek and symbols
         replacements = {
@@ -141,6 +171,16 @@ def generate_pdf(data_frame_or_sections, output_filename="formulas.pdf"):
 
             # Wrap text content
             def to_paragraph(text, pre_escaped=False):
+                """
+                Convierte texto en un objeto Paragraph de ReportLab.
+
+                Args:
+                    text (str): El texto a convertir.
+                    pre_escaped (bool): Indica si el texto ya ha sido escapado para HTML.
+
+                Returns:
+                    Paragraph: El objeto Paragraph formateado.
+                """
                 if not text: return Paragraph("", cell_style)
                 
                 txt_str = str(text)

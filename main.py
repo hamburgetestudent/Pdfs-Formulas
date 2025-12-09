@@ -11,7 +11,19 @@ ctk.set_appearance_mode("Dark")
 ctk.set_default_color_theme("blue")
 
 class FormulaApp:
+    """
+    Clase principal para la aplicación GUI de Generador de Fórmulas.
+
+    Esta clase maneja la interfaz gráfica de usuario construida con CustomTkinter,
+    permitiendo al usuario ingresar datos de fórmulas, previsualizarlos y generar un PDF.
+    """
     def __init__(self, root):
+        """
+        Inicializa la aplicación y configura la interfaz gráfica.
+
+        Args:
+            root (ctk.CTk): La ventana raíz de la aplicación.
+        """
         self.root = root
         self.root.title("Generador de Fórmulas Física PDF")
         self.root.geometry("900x700")
@@ -49,6 +61,12 @@ class FormulaApp:
         self.clear_btn.pack(side="left")
 
     def load_default_data(self):
+        """
+        Carga datos por defecto desde 'input_data.csv' en el área de texto si el archivo existe.
+
+        Returns:
+            None
+        """
         if os.path.exists("input_data.csv"):
             try:
                 with open("input_data.csv", "r", encoding="utf-8") as f:
@@ -58,12 +76,27 @@ class FormulaApp:
                 print(f"Could not load default data: {e}")
 
     def clear_text(self):
+        """
+        Borra todo el contenido del área de texto.
+
+        Returns:
+            None
+        """
         self.text_area.delete("1.0", "end")
 
     def parse_input(self, text):
         """
-        Parses text input into a list of sections.
-        Returns: [{'title': 'Section Name', 'rows': [dict, dict, ...]}, ...]
+        Analiza el texto de entrada y lo convierte en una lista estructurada de secciones.
+
+        Soporta formato Markdown (con encabezados ### y tablas) y formato CSV heredado.
+
+        Args:
+            text (str): El texto crudo ingresado por el usuario.
+
+        Returns:
+            list: Una lista de diccionarios, donde cada diccionario representa una sección con el formato:
+                  {'title': 'Nombre Sección', 'rows': [dict, dict, ...]}
+                  Cada fila es un diccionario que mapea encabezados a valores.
         """
         text = text.strip()
         data = []
@@ -136,6 +169,15 @@ class FormulaApp:
         return data
 
     def generate_pdf_action(self):
+        """
+        Manejador del evento del botón para generar el PDF.
+
+        Obtiene el texto, lo analiza, solicita al usuario una ubicación de guardado
+        y llama a la función de generación de PDF. Muestra cuadros de diálogo de éxito o error.
+
+        Returns:
+            None
+        """
         content = self.text_area.get("1.0", "end").strip()
         if not content:
             messagebox.showwarning("Advertencia", "El área de texto está vacía.")
@@ -166,6 +208,11 @@ class FormulaApp:
             messagebox.showerror("Error", f"Ocurrió un error al generar el PDF:\n{str(e)}")
 
 def main():
+    """
+    Punto de entrada principal para la aplicación.
+
+    Inicializa el bucle principal de CustomTkinter.
+    """
     root = ctk.CTk()
     app = FormulaApp(root)
     root.mainloop()
