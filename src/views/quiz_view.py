@@ -43,7 +43,7 @@ class QuizView(ctk.CTkFrame):
 
     def load_quiz_data(self):
         # Check for external JSON file
-        external_path = get_external_path("quiz_data.json")
+        external_path = get_external_path(os.path.join("data", "quiz_data.json"))
         if os.path.exists(external_path):
             try:
                 with open(external_path, "r", encoding="utf-8") as f:

@@ -44,8 +44,8 @@ class PDFGeneratorView(ctk.CTkFrame):
 
     def load_default_data(self):
         # 1. Try external file (next to exe)
-        external_path = get_external_path("input_data.csv")
-        file_path = external_path if os.path.exists(external_path) else resource_path("input_data.csv")
+        external_path = get_external_path(os.path.join("data", "input_data.csv"))
+        file_path = external_path if os.path.exists(external_path) else resource_path(os.path.join("data", "input_data.csv"))
 
         if os.path.exists(file_path):
             try:

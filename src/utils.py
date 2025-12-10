@@ -25,7 +25,7 @@ def resource_path(relative_path):
 
 def load_config():
     """ Load configuration from external JSON file """
-    config_path = get_external_path("config.json")
+    config_path = get_external_path(os.path.join("data", "config.json"))
     default_config = {
         "quiz_formula_fontsize": 28,
         "quiz_formula_dpi": 100,
