@@ -226,13 +226,14 @@ class QuizView(ctk.CTkFrame):
             return self.cached_images[latex]
 
         # Render
-        buf = render_formula_to_image(latex, fontsize=16, dpi=100, text_color='white')
+        # Increased fontsize and scale to make formulas bigger within the button
+        buf = render_formula_to_image(latex, fontsize=28, dpi=100, text_color='white')
         if buf:
             pil_img = Image.open(buf)
             # Create CTkImage
             # We scale it slightly for better visibility
             w, h = pil_img.size
-            scale = 0.5 # Reduce huge dpi size to UI size
+            scale = 0.9 # Reduce huge dpi size to UI size
             ctk_img = ctk.CTkImage(light_image=pil_img, dark_image=pil_img, size=(w*scale, h*scale))
             self.cached_images[latex] = ctk_img
             return ctk_img
