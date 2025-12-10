@@ -1,98 +1,80 @@
-# Generador de Fórmulas de Física en PDF
+# Herramienta de Estudio de Física (Generador & Quiz)
 
-Este proyecto es una herramienta de escritorio desarrollada en Python que permite a los usuarios generar documentos PDF con tablas de fórmulas físicas a partir de datos ingresados en formato CSV o Markdown.
+Bienvenido a la herramienta definitiva para estudiantes y profesores de física. Esta aplicación de escritorio combina un potente sistema de **aprendizaje interactivo** con cuestionarios gamificados y un **generador de documentos PDF** para material de estudio.
 
-La aplicación cuenta con una interfaz gráfica moderna (CustomTkinter) y renderiza fórmulas matemáticas LaTeX utilizando Matplotlib y ReportLab.
+Diseñada con una interfaz moderna y oscura (`CustomTkinter`), es ideal para practicar fórmulas, ponerse a prueba y crear hojas de fórmulas para exámenes.
 
-## Características
+## Características Principales
 
-*   **Interfaz Gráfica Moderna**: Utiliza `customtkinter` para una experiencia de usuario agradable con tema oscuro.
-*   **Soporte de Entrada Flexible**: Acepta datos copiados y pegados en formato CSV (separado por punto y coma) o tablas Markdown con secciones.
-*   **Renderizado LaTeX**: Convierte cadenas LaTeX en imágenes de alta calidad dentro del PDF.
-*   **Generación de PDF**: Crea documentos PDF estructurados y listos para imprimir.
-*   **Portabilidad**: Puede ser empaquetado como un ejecutable único.
+### 1. 🎓 Modo Estudio y Cuestionarios (Quiz)
+La función principal de la aplicación es ayudarte a dominar la física.
+*   **Aprendizaje de Fórmulas:** Relaciona conceptos físicos con su fórmula matemática correcta (renderizada en LaTeX).
+*   **Banco de Preguntas:** Practica con preguntas de selección múltiple sobre teoría y aplicación.
+*   **Niveles de Dificultad:** Elige entre Fácil, Medio y Difícil para adaptar el reto a tu nivel.
+*   **Feedback Inmediato:** Aprende de tus errores con correcciones visuales instantáneas.
 
+### 2. 🏆 Sistema de Gamificación
+¡Haz que estudiar sea divertido! La aplicación rastrea tu progreso localmente.
+*   **Experiencia (XP):** Gana **10 XP** por cada respuesta correcta.
+*   **Niveles:** Sube de nivel cada **100 XP** acumulados.
+*   **Rachas:** Mantén una racha de aciertos para demostrar tu dominio.
+*   **Logros:** Desbloquea medallas como *"Primer Paso"*, *"Estudioso"*, *"Maestro"* y *"En Llamas"*.
 
-## Compilación Automática y Manual
+### 3. 📄 Generador de PDF
+Crea documentos profesionales con tablas de fórmulas listas para imprimir.
+*   **Entrada Flexible:** Copia y pega desde Excel/CSV o escribe en Markdown.
+*   **Renderizado LaTeX:** Las fórmulas se convierten automáticamente en imágenes nítidas de alta calidad.
+*   **Portabilidad:** Genera un archivo PDF estructurado en segundos.
 
-Se han incluido scripts para facilitar la generación del ejecutable `.exe`:
+---
 
-### Manualmente
-Ejecuta el archivo `build.bat` (doble clic). Esto creará una nueva versión del programa en la carpeta `dist/`.
+## Instalación
 
-### Automáticamente (Watch Mode)
-Ejecuta el script `auto_build.py`:
-```bash
-python auto_build.py
-```
-Este script se quedará corriendo en una terminal y monitoreará cambios en tus archivos `.py` y `.spec`. Apenas guardes un cambio en tu código, reconstruirá el `.exe` automáticamente.
-
-## Estructura del Proyecto
-
-El código fuente está organizado de la siguiente manera:
-
-*   `main.py`: Punto de entrada de la aplicación. Contiene la lógica de la interfaz gráfica (`FormulaApp`) y el manejo de eventos.
-*   `pdf_builder.py`: Módulo encargado de la generación del documento PDF utilizando ReportLab. Procesa los datos y construye las tablas.
-*   `renderer.py`: Módulo utilitario que utiliza Matplotlib para renderizar fórmulas LaTeX en imágenes PNG en memoria.
-*   `reproduce_crash.py`: Script de prueba para verificar la lógica de generación de PDF y renderizado sin la interfaz gráfica.
-
-## Instalación y Configuración
-
-### Requisitos Previos
-
-*   Python 3.8 o superior.
-*   Dependencias listadas en `requirements.txt`.
-
-### Pasos
-
-1.  Clona el repositorio o descarga el código fuente.
-2.  Instala las dependencias necesarias:
-
+1.  **Requisitos:** Python 3.8 o superior.
+2.  **Instalar dependencias:**
     ```bash
     pip install -r requirements.txt
     ```
-
-    *Nota: Si no existe `requirements.txt`, las dependencias principales son `customtkinter`, `reportlab`, `matplotlib`.*
-
-## Uso
-
-1.  Ejecuta la aplicación:
-
+3.  **Ejecutar:**
     ```bash
     python main.py
     ```
 
-2.  En la ventana de la aplicación, ingresa tus datos en el área de texto.
+---
 
-    **Formato Markdown (Recomendado):**
+## Guía de Uso
+
+### Modo Cuestionario (Quiz)
+1.  En el menú lateral, selecciona **"Quiz / Cuestionario"**.
+2.  Navega por las categorías (ej: *Física Clásica* -> *Cinemática*).
+3.  Elige tu modo de práctica:
+    *   **Aprender Fórmulas:** Identifica la ecuación visual.
+    *   **Responder Preguntas:** Resuelve problemas teóricos.
+4.  (Opcional) Selecciona la dificultad.
+5.  ¡Responde y sube de nivel! Tu progreso se guarda automáticamente.
+
+### Generador de PDF
+1.  En el menú lateral, selecciona **"Generador PDF"**.
+2.  Ingresa tus datos en el área de texto. Se recomienda el formato Markdown:
     ```markdown
-    ### Cinemática
-    | Concepto | Fórmula Simbólica | Fórmula en Texto | Dato Relevante / Uso | Unidad (SI) |
-    |---|---|---|---|---|
-    | Velocidad | v = d/t | Velocidad es distancia sobre tiempo | Movimiento uniforme | m/s |
+    ### Dinámica
+    | Concepto | Fórmula | Notas |
+    |---|---|---|
+    | Fuerza | F = m * a | Segunda Ley de Newton |
     ```
+3.  Haz clic en **"Generar PDF"** y guarda tu archivo.
 
-    **Formato CSV (Legacy):**
-    ```csv
-    Concepto;Fórmula;Variables;Unidades (SI)
-    Velocidad;v = d/t;d: distancia, t: tiempo;m/s
-    ```
+---
 
-3.  Haz clic en el botón **"Generar PDF"**.
-4.  Selecciona la ubicación donde deseas guardar el archivo PDF.
+## Estructura del Proyecto
 
-## Desarrollo
+*   `src/views/`: Contiene las interfaces gráficas (Home, Quiz, PDF).
+*   `src/gamification.py`: Lógica del sistema de progreso y logros.
+*   `data/`: Almacena la base de datos de preguntas (`quiz_db.json`) y tu progreso (`user_progress.json`).
+*   `pdf_builder.py` & `renderer.py`: Motores de generación de documentos e imágenes matemáticas.
 
-### Generar Ejecutable
-
-Para crear un ejecutable (Windows/Linux/Mac) utilizando PyInstaller, utiliza el archivo de especificación incluido:
-
-```bash
-pyinstaller GeneradorFormulas.spec
-```
-
-El ejecutable se generará en la carpeta `dist`.
+## Contribución
+Si deseas contribuir, por favor revisa el archivo `ROADMAP.md` para ver las tareas pendientes y prioridades.
 
 ## Licencia
-
 Este proyecto es de código abierto.
