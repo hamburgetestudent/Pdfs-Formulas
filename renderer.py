@@ -3,7 +3,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import io
 
-def render_formula_to_image(latex_string, fontsize=12, dpi=300):
+def render_formula_to_image(latex_string, fontsize=12, dpi=300, text_color='black'):
     """
     Renderiza una cadena LaTeX en una imagen PNG en memoria.
 
@@ -14,6 +14,7 @@ def render_formula_to_image(latex_string, fontsize=12, dpi=300):
         latex_string (str): La cadena que contiene la fórmula en formato LaTeX.
         fontsize (int, opcional): El tamaño de fuente para la fórmula. Por defecto es 12.
         dpi (int, opcional): Los puntos por pulgada (resolución) de la imagen generada. Por defecto es 300.
+        text_color (str, opcional): Color del texto. Por defecto 'black'.
 
     Returns:
         io.BytesIO: Un buffer de bytes que contiene la imagen PNG generada, o None si ocurre un error durante el renderizado.
@@ -29,7 +30,7 @@ def render_formula_to_image(latex_string, fontsize=12, dpi=300):
         
         # Place text at (0,0) - we'll just extract the bbox later or let savefig handle it
         # Actually simplest way is to turn off axis and save the text
-        fig.text(0.5, 0.5, text_content, fontsize=fontsize, ha='center', va='center')
+        fig.text(0.5, 0.5, text_content, fontsize=fontsize, ha='center', va='center', color=text_color)
         
         # Hide axis
         plt.axis('off')
