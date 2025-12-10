@@ -1,0 +1,166 @@
+{
+    "Física": {
+        "Mecánica": {
+            "Cinemática en 2D": {
+                "formulas": [
+                    {
+                        "concepto": "Vector de Posición",
+                        "formula": "\\vec{r} = x\\hat{i} + y\\hat{j}"
+                    },
+                    {
+                        "concepto": "Vector Desplazamiento",
+                        "formula": "\\Delta \\vec{r} = \\vec{r}_f - \\vec{r}_i"
+                    },
+                    {
+                        "concepto": "Velocidad Media",
+                        "formula": "\\vec{v}_{avg} = \\frac{\\Delta \\vec{r}}{\\Delta t}"
+                    },
+                    {
+                        "concepto": "Velocidad Instantánea",
+                        "formula": "\\vec{v} = \\frac{d\\vec{r}}{dt}"
+                    },
+                    {
+                        "concepto": "Aceleración Media",
+                        "formula": "\\vec{a}_{avg} = \\frac{\\Delta \\vec{v}}{\\Delta t}"
+                    },
+                    {
+                        "concepto": "Aceleración Instantánea",
+                        "formula": "\\vec{a} = \\frac{d\\vec{v}}{dt}"
+                    },
+                    {
+                        "concepto": "Movimiento de Proyectiles: Posición Horizontal",
+                        "formula": "x(t) = x_0 + (v_0 \\cos \\theta_0) t"
+                    },
+                    {
+                        "concepto": "Movimiento de Proyectiles: Posición Vertical",
+                        "formula": "y(t) = y_0 + (v_0 \\sin \\theta_0) t - \\frac{1}{2}g t^2"
+                    },
+                    {
+                        "concepto": "Movimiento de Proyectiles: Velocidad Horizontal",
+                        "formula": "v_x = v_0 \\cos \\theta_0"
+                    },
+                    {
+                        "concepto": "Movimiento de Proyectiles: Velocidad Vertical",
+                        "formula": "v_y = v_0 \\sin \\theta_0 - gt"
+                    },
+                    {
+                        "concepto": "Ecuación de Trayectoria (Proyectiles)",
+                        "formula": "y = (\\tan \\theta_0)x - \\frac{g}{2(v_0 \\cos \\theta_0)^2}x^2"
+                    },
+                    {
+                        "concepto": "Alcance Horizontal Máximo (R)",
+                        "formula": "R = \\frac{v_0^2 \\sin 2\\theta_0}{g}"
+                    },
+                    {
+                        "concepto": "Altura Máxima (H)",
+                        "formula": "H = \\frac{(v_0 \\sin \\theta_0)^2}{2g}"
+                    },
+                    {
+                        "concepto": "Aceleración Centripeta (Circular Uniforme)",
+                        "formula": "a_c = \\frac{v^2}{r}"
+                    },
+                    {
+                        "concepto": "Periodo (Circular Uniforme)",
+                        "formula": "T = \\frac{2\\pi r}{v}"
+                    }
+                ],
+                "questions": [
+                    {
+                        "question": "¿Cuál es la unidad del vector de posición en el SI?",
+                        "options": ["Metros (m)", "Segundos (s)", "Metros por segundo (m/s)", "Newtons (N)"],
+                        "correct_option": "Metros (m)",
+                        "difficulty": "Fácil"
+                    },
+                    {
+                        "question": "En el movimiento de proyectiles, ¿cómo es la aceleración en el eje horizontal (x) si se desprecia la resistencia del aire?",
+                        "options": ["Cero", "9.8 m/s²", "Variable", "Negativa"],
+                        "correct_option": "Cero",
+                        "difficulty": "Medio"
+                    },
+                    {
+                        "question": "¿Qué ángulo de lanzamiento produce el alcance horizontal máximo?",
+                        "options": ["45 grados", "30 grados", "60 grados", "90 grados"],
+                        "correct_option": "45 grados",
+                        "difficulty": "Fácil"
+                    },
+                    {
+                        "question": "Si un objeto se mueve en un círculo con rapidez constante, ¿tiene aceleración?",
+                        "options": ["Sí, centrípeta", "No, velocidad es constante", "Sí, tangencial", "Solo si cambia de dirección"],
+                        "correct_option": "Sí, centrípeta",
+                        "difficulty": "Medio"
+                    },
+                    {
+                        "question": "Calcula el periodo si la frecuencia es 50 Hz.",
+                        "options": ["0.02 s", "50 s", "0.2 s", "2 s"],
+                        "correct_option": "0.02 s",
+                        "difficulty": "Difícil"
+                    }
+                ]
+            },
+            "Dinámica": {
+                "formulas": [
+                    {
+                        "concepto": "Segunda Ley de Newton",
+                        "formula": "\\vec{F}_{net} = m\\vec{a}"
+                    },
+                    {
+                        "concepto": "Peso",
+                        "formula": "\\vec{w} = m\\vec{g}"
+                    },
+                    {
+                        "concepto": "Fuerza de Fricción Cinética",
+                        "formula": "f_k = \\mu_k n"
+                    },
+                    {
+                        "concepto": "Fuerza de Fricción Estática Máxima",
+                        "formula": "f_{s,max} = \\mu_s n"
+                    },
+                    {
+                        "concepto": "Trabajo (Fuerza Constante)",
+                        "formula": "W = \\vec{F} \\cdot \\vec{d} = Fd \\cos \\theta"
+                    },
+                    {
+                        "concepto": "Energía Cinética",
+                        "formula": "K = \\frac{1}{2}mv^2"
+                    },
+                    {
+                        "concepto": "Teorema Trabajo-Energía",
+                        "formula": "W_{net} = \\Delta K = K_f - K_i"
+                    },
+                    {
+                        "concepto": "Energía Potencial Gravitacional",
+                        "formula": "U_g = mgy"
+                    },
+                    {
+                        "concepto": "Energía Potencial Elástica",
+                        "formula": "U_el = \\frac{1}{2}kx^2"
+                    },
+                    {
+                        "concepto": "Potencia Media",
+                        "formula": "P_{avg} = \\frac{\\Delta W}{\\Delta t}"
+                    }
+                ],
+                "questions": [
+                    {
+                        "question": "¿Cuál es la unidad de fuerza en el SI?",
+                        "options": ["Newton (N)", "Joule (J)", "Watt (W)", "Pascal (Pa)"],
+                        "correct_option": "Newton (N)",
+                        "difficulty": "Fácil"
+                    },
+                    {
+                        "question": "¿Qué dice la Tercera Ley de Newton?",
+                        "options": ["Acción y Reacción", "Inercia", "Fuerza igual a masa por aceleración", "Gravedad"],
+                        "correct_option": "Acción y Reacción",
+                        "difficulty": "Fácil"
+                    },
+                    {
+                        "question": "Si la fuerza neta sobre un objeto es cero, su aceleración es:",
+                        "options": ["Cero", "Constante positiva", "9.8 m/s²", "Variable"],
+                        "correct_option": "Cero",
+                        "difficulty": "Medio"
+                    }
+                ]
+            }
+        }
+    }
+}
