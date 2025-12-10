@@ -13,6 +13,18 @@ from quiz_data import QUIZ_DATA
 ctk.set_appearance_mode("Dark")
 ctk.set_default_color_theme("blue")
 
+import sys
+
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
+
 class PDFGeneratorView(ctk.CTkFrame):
     """
     Vista para la generación de PDFs. Contiene la lógica original de la aplicación.
@@ -51,9 +63,10 @@ class PDFGeneratorView(ctk.CTkFrame):
         self.load_default_data()
 
     def load_default_data(self):
-        if os.path.exists("input_data.csv"):
+        file_path = resource_path("input_data.csv")
+        if os.path.exists(file_path):
             try:
-                with open("input_data.csv", "r", encoding="utf-8") as f:
+                with open(file_path, "r", encoding="utf-8") as f:
                     content = f.read()
                     self.text_area.insert("1.0", content)
             except Exception as e:
