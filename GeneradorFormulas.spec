@@ -1,7 +1,12 @@
 # -*- mode: python ; coding: utf-8 -*-
 from PyInstaller.utils.hooks import collect_all
 
-datas, binaries, hiddenimports = collect_all('customtkinter')
+datas_ctk, binaries_ctk, hiddenimports_ctk = collect_all('customtkinter')
+datas_mpl, binaries_mpl, hiddenimports_mpl = collect_all('matplotlib')
+
+datas = datas_ctk + datas_mpl
+binaries = binaries_ctk + binaries_mpl
+hiddenimports = hiddenimports_ctk + hiddenimports_mpl
 
 a = Analysis(
     ['main.py'],
