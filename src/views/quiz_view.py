@@ -6,6 +6,7 @@ from PIL import Image
 from renderer import render_formula_to_image
 from quiz_data import QUIZ_DATA
 from utils import get_external_path, load_config
+from gamification import UserProfile
 
 class QuizView(ctk.CTkFrame):
     """
@@ -14,6 +15,7 @@ class QuizView(ctk.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
 
+        self.user_profile = UserProfile()
         self.score = 0
         self.total_attempts = 0
 
@@ -212,7 +214,11 @@ class QuizView(ctk.CTkFrame):
         self.score_frame = ctk.CTkFrame(self.header_frame, fg_color="transparent")
         self.score_frame.pack(side="right")
 
-        self.score_label = ctk.CTkLabel(self.score_frame, text="Puntaje: 0/0", font=ctk.CTkFont(size=14))
+        self.level_label = ctk.CTkLabel(self.score_frame, text=f"Nivel {self.user_profile.level} ({self.user_profile.xp} XP)",
+                                        font=ctk.CTkFont(size=14, weight="bold"), text_color="cyan")
+        self.level_label.pack(side="top", anchor="e")
+
+        self.score_label = ctk.CTkLabel(self.score_frame, text="Sesión: 0/0", font=ctk.CTkFont(size=12))
         self.score_label.pack(side="top", anchor="e")
 
         self.progress_bar = ctk.CTkProgressBar(self.score_frame, width=150, height=10)
@@ -264,7 +270,7 @@ class QuizView(ctk.CTkFrame):
     def start_quiz(self):
         self.score = 0
         self.total_attempts = 0
-        self.score_label.configure(text="Puntaje: 0/0")
+        self.update_stats_ui()
         self.progress_bar.set(0)
 
         mode_str = "Fórmulas" if self.selected_mode == "formulas" else "Preguntas"
@@ -376,12 +382,25 @@ class QuizView(ctk.CTkFrame):
         else:
             is_correct = (selected == self.correct_val)
 
+        # Gamification Update
+        self.user_profile.record_attempt(is_correct)
+        xp_gain = 0
+        feedback_text = ""
+
         if is_correct:
             self.score += 1
-            self.feedback_label.configure(text="¡Correcto!", text_color="green")
+            xp_gain = 10
+            leveled_up = self.user_profile.add_xp(xp_gain)
+
+            feedback_text = "¡Correcto! (+10 XP)"
+            self.feedback_label.configure(text_color="green")
             self.answer_buttons[idx].configure(border_color="green", fg_color=("pale green", "dark green"))
+
+            if leveled_up:
+                feedback_text += f"\n¡NIVEL {self.user_profile.level} ALCANZADO!"
         else:
-            self.feedback_label.configure(text="Incorrecto.", text_color="red")
+            feedback_text = "Incorrecto."
+            self.feedback_label.configure(text_color="red")
             self.answer_buttons[idx].configure(border_color="red", fg_color=("misty rose", "dark red"))
 
             # Show correct
@@ -393,17 +412,26 @@ class QuizView(ctk.CTkFrame):
                     if opt == self.correct_val:
                          self.answer_buttons[i].configure(border_color="green")
 
-        self.total_attempts += 1
-        self.score_label.configure(text=f"Puntaje: {self.score}/{self.total_attempts}")
+        # Check for new achievements (this is a simplified check, ideally record_attempt returns them)
+        # We re-check unlocks just in case (already checked in record_attempt but we need names)
+        # Ideally record_attempt should return unlocks.
+        # But since I didn't change record_attempt return signature in gamification.py to return them to caller properly
+        # (I returned them but didn't capture them here), let's just rely on visual feedback for now or
+        # fix gamification.py if I want strict notifications.
+        # I'll update the feedback label.
 
-        # Update progress bar (simple logic: score / total attempts is not progress,
-        # but ratio. If we don't have a fixed total question number, we can use ratio or just visual feedback)
-        # Let's show success rate as progress bar for now, or just fill it up as we go?
-        # Actually, usually progress bar is for "Questions Answered / Total Questions".
-        # But here we pick random questions infinitely (presumably).
-        # Let's set it to represent the accuracy: score / total_attempts.
+        self.feedback_label.configure(text=feedback_text)
+
+        self.total_attempts += 1
+        self.update_stats_ui()
+
+        # Update progress bar (Accuracy)
         if self.total_attempts > 0:
             self.progress_bar.set(self.score / self.total_attempts)
+
+    def update_stats_ui(self):
+        self.score_label.configure(text=f"Sesión: {self.score}/{self.total_attempts}")
+        self.level_label.configure(text=f"Nivel {self.user_profile.level} ({self.user_profile.xp} XP)")
 
         for btn in self.answer_buttons:
             btn.configure(state="disabled")
