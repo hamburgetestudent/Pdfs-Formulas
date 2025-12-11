@@ -1,115 +1,140 @@
 import tkinter as tk
-from tkinter import messagebox, filedialog
+from tkinter import messagebox
 import customtkinter as ctk
+
+# Views
 from views.pdf_view import PDFGeneratorView
-from views.quiz_view import QuizView
-from views.home_view import HomeView
+from views.home_view import HomeView # Keeping old HomeView code but not using it? Or reusing parts?
+from views.dashboard_view import DashboardView
+from views.lesson_view import LessonView
+from views.components.sidebar import Sidebar
+from views.components.topbar import TopBar
+
+from gamification import UserProfile
 from utils import load_config
 
-# Set appearance and theme (Global)
-config = load_config()
-ctk.set_appearance_mode(config.get("ui_theme", "Dark"))
-ctk.set_default_color_theme(config.get("ui_color_theme", "blue"))
+# Global Theme
+ctk.set_appearance_mode("Dark")
+ctk.set_default_color_theme("blue")
 
-class FormulaApp:
-    def __init__(self, root):
-        self.root = root
-        self.root.title("Generador de Fórmulas Física PDF")
-        self.root.geometry("1100x700")
+class App(ctk.CTk):
+    def __init__(self):
+        super().__init__()
 
-        # Layout: 2 Columns
-        # Col 0: Sidebar (Small width), Col 1: Main Content (Expanded)
-        self.root.grid_columnconfigure(1, weight=1)
-        self.root.grid_rowconfigure(0, weight=1)
+        self.title("PhysiCode")
+        self.geometry("1100x700")
 
-        # --- Sidebar ---
-        self.sidebar_frame = ctk.CTkFrame(self.root, width=220, corner_radius=0)
-        self.sidebar_frame.grid(row=0, column=0, sticky="nsew")
-        self.sidebar_frame.grid_rowconfigure(5, weight=1)
+        # Data & Config
+        self.user_profile = UserProfile()
+        self.config = load_config()
 
-        self.logo_label = ctk.CTkLabel(self.sidebar_frame, text="Dashboard", font=ctk.CTkFont(size=20, weight="bold"))
-        self.logo_label.grid(row=0, column=0, padx=20, pady=(20, 20))
+        # Layout Grid
+        self.grid_columnconfigure(0, weight=0) # Sidebar
+        self.grid_columnconfigure(1, weight=1) # Main Content
+        self.grid_rowconfigure(0, weight=1)
 
-        # Common button style
-        btn_kwargs = {
-            "height": 40,
-            "anchor": "w",
-            "font": ctk.CTkFont(size=16),
-            "fg_color": "transparent",
-            "text_color": ("gray10", "gray90"),
-            "hover_color": ("gray70", "gray30")
-        }
+        # State
+        self.current_view_name = "dashboard"
+        self.views = {}
 
-        self.btn_home = ctk.CTkButton(self.sidebar_frame, text="🏠  Inicio", command=self.show_home_view, **btn_kwargs)
-        self.btn_home.grid(row=1, column=0, padx=20, pady=10, sticky="ew")
+        # --- Components ---
 
-        self.btn_gen = ctk.CTkButton(self.sidebar_frame, text="📄  Generador PDF", command=self.show_generator_view, **btn_kwargs)
-        self.btn_gen.grid(row=2, column=0, padx=20, pady=10, sticky="ew")
+        # 1. Sidebar (Left)
+        self.sidebar = Sidebar(self, on_navigate=self.navigate)
+        self.sidebar.grid(row=0, column=0, sticky="nsew")
 
-        self.btn_quiz = ctk.CTkButton(self.sidebar_frame, text="🎓  Quiz / Estudio", command=self.show_quiz_view, **btn_kwargs)
-        self.btn_quiz.grid(row=3, column=0, padx=20, pady=10, sticky="ew")
+        # 2. Main Area (Right)
+        self.main_area = ctk.CTkFrame(self, fg_color="#030712", corner_radius=0) # gray-950
+        self.main_area.grid(row=0, column=1, sticky="nsew")
+        self.main_area.grid_rowconfigure(0, weight=0) # TopBar
+        self.main_area.grid_rowconfigure(1, weight=1) # Content
+        self.main_area.grid_columnconfigure(0, weight=1)
 
-        # --- Main Content Area ---
-        self.main_frame = ctk.CTkFrame(self.root, corner_radius=0, fg_color="transparent")
-        self.main_frame.grid(row=0, column=1, sticky="nsew")
-        self.main_frame.grid_rowconfigure(0, weight=1) # Header/Toggle
-        self.main_frame.grid_rowconfigure(1, weight=10) # Content
-        self.main_frame.grid_columnconfigure(0, weight=1)
+        # 3. TopBar
+        self.topbar = TopBar(self.main_area, self.user_profile)
+        self.topbar.grid(row=0, column=0, sticky="ew")
 
-        # Toggle Button Area
-        self.top_bar = ctk.CTkFrame(self.main_frame, height=40, fg_color="transparent")
-        self.top_bar.grid(row=0, column=0, sticky="ew", padx=10, pady=5)
-
-        self.toggle_btn = ctk.CTkButton(self.top_bar, text="☰", width=40, command=self.toggle_sidebar, fg_color="transparent", text_color=("gray10", "gray90"), hover_color=("gray70", "gray30"))
-        self.toggle_btn.pack(side="left")
-
-        # Content Container
-        self.content_container = ctk.CTkFrame(self.main_frame, fg_color="transparent")
+        # 4. Content Container
+        self.content_container = ctk.CTkFrame(self.main_area, fg_color="transparent")
         self.content_container.grid(row=1, column=0, sticky="nsew")
         self.content_container.grid_columnconfigure(0, weight=1)
         self.content_container.grid_rowconfigure(0, weight=1)
 
-        # Views
-        self.views = {}
-        self.views["home"] = HomeView(self.content_container, on_navigate=self.show_view)
-        self.views["generator"] = PDFGeneratorView(self.content_container)
-        self.views["quiz"] = QuizView(self.content_container)
+        # --- Views Initialization ---
+        self.init_views()
+        self.navigate("dashboard")
 
-        # Show default
-        self.show_home_view()
-        self.sidebar_visible = True
+    def init_views(self):
+        # Dashboard (The Tree)
+        self.views["dashboard"] = DashboardView(
+            self.content_container,
+            on_start_lesson=self.start_lesson
+        )
 
-    def show_view(self, name):
-        # Hide all
-        for view in self.views.values():
-            view.grid_forget()
+        # PDF Generator (Existing)
+        # Note: PDFView might rely on pack/grid internally. We need to ensure it fills `content_container`.
+        self.views["pdf_generator"] = PDFGeneratorView(self.content_container)
 
-        # Update Sidebar State (Visual Indication optional, keeping simple for now)
+        # Stats / Profile (Placeholders)
+        self.views["stats"] = self.create_placeholder("Clasificación - Próximamente")
+        self.views["profile"] = self.create_placeholder("Perfil de Usuario - Próximamente")
 
-        # Show selected
-        self.views[name].grid(row=0, column=0, sticky="nsew")
+    def create_placeholder(self, text):
+        frame = ctk.CTkFrame(self.content_container, fg_color="transparent")
+        ctk.CTkLabel(frame, text=text, font=ctk.CTkFont(size=24)).pack(expand=True)
+        return frame
 
-    def show_home_view(self):
-        self.show_view("home")
+    def navigate(self, view_name):
+        self.current_view_name = view_name
 
-    def show_generator_view(self):
-        self.show_view("generator")
+        # If navigating away from lesson, ensure Sidebar/Topbar are visible
+        self.sidebar.grid(row=0, column=0, sticky="nsew")
+        self.topbar.grid(row=0, column=0, sticky="ew")
 
-    def show_quiz_view(self):
-        self.show_view("quiz")
+        # Refresh gamification stats in TopBar
+        self.topbar.update_stats()
+        self.sidebar.set_active(view_name)
 
-    def toggle_sidebar(self):
-        if self.sidebar_visible:
-            self.sidebar_frame.grid_forget()
-            self.sidebar_visible = False
+        # Clear Content
+        for child in self.content_container.winfo_children():
+            child.pack_forget()
+            child.grid_forget()
+
+        # Show Selected View
+        if view_name in self.views:
+            view = self.views[view_name]
+            view.grid(row=0, column=0, sticky="nsew")
         else:
-            self.sidebar_frame.grid(row=0, column=0, sticky="nsew")
-            self.sidebar_visible = True
+            print(f"View {view_name} not found")
 
-def main():
-    root = ctk.CTk()
-    app = FormulaApp(root)
-    root.mainloop()
+    def start_lesson(self, title, data, mode):
+        # Switch to Lesson View (Fullscreen-ish)
+        # Hide Sidebar for focus? Duolingo hides it.
+        self.sidebar.grid_forget()
+        self.topbar.grid_forget() # Lesson has its own progress header
+
+        # Clear content
+        for child in self.content_container.winfo_children():
+            child.grid_forget()
+
+        # Create new LessonView instance (fresh state)
+        lesson_view = LessonView(
+            self.content_container,
+            topic_name=title,
+            topic_data=data,
+            mode=mode,
+            on_finish=self.finish_lesson,
+            user_profile=self.user_profile
+        )
+        lesson_view.grid(row=0, column=0, sticky="nsew")
+
+        # Keep track to destroy later? Content container clearing handles it.
+
+    def finish_lesson(self):
+        # Return to Dashboard
+        self.navigate("dashboard")
+
 
 if __name__ == "__main__":
-    main()
+    app = App()
+    app.mainloop()

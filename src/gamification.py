@@ -5,6 +5,7 @@ from utils import get_external_path
 class UserProfile:
     def __init__(self):
         self.xp = 0
+        self.gems = 0  # New currency
         self.level = 1
         self.stats = {
             "total_correct": 0,
@@ -22,6 +23,7 @@ class UserProfile:
                 with open(self.filepath, "r", encoding="utf-8") as f:
                     data = json.load(f)
                     self.xp = data.get("xp", 0)
+                    self.gems = data.get("gems", 0)  # Load gems
                     self.level = data.get("level", 1)
                     self.stats = data.get("stats", self.stats)
                     self.achievements = data.get("achievements", [])
@@ -31,6 +33,7 @@ class UserProfile:
     def save(self):
         data = {
             "xp": self.xp,
+            "gems": self.gems,  # Save gems
             "level": self.level,
             "stats": self.stats,
             "achievements": self.achievements
@@ -48,6 +51,10 @@ class UserProfile:
         self.xp += amount
         self.calculate_level()
         return self.level > old_level
+
+    def add_gems(self, amount):
+        self.gems += amount
+        self.save()
 
     def calculate_level(self):
         # Formula: Level = 1 + (XP // 100)
