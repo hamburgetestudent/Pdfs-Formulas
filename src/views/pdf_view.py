@@ -22,11 +22,20 @@ class PDFGeneratorView(ctk.CTkFrame):
 
         # Instructions
         instruction_text = "Pegue aquí sus datos (Formato: Concepto;Fórmula;Variables;Unidades (SI)) o use formato Markdown:"
-        self.instr_label = ctk.CTkLabel(self, text=instruction_text, anchor="w", text_color="gray70", font=ctk.CTkFont(size=14))
+        self.instr_label = ctk.CTkLabel(self, text=instruction_text, anchor="w", text_color="#D1D5DB", font=ctk.CTkFont(size=14))
         self.instr_label.grid(row=1, column=0, sticky="ew", padx=20, pady=(0, 5))
 
-        # Text Area (Wrapped in a frame for better look if needed, but direct is fine)
-        self.text_area = ctk.CTkTextbox(self, wrap="word", font=ctk.CTkFont(size=14), corner_radius=10, border_width=1, border_color=("gray60", "gray40"))
+        # Text Area
+        self.text_area = ctk.CTkTextbox(
+            self,
+            wrap="word",
+            font=ctk.CTkFont(size=14),
+            corner_radius=10,
+            border_width=1,
+            fg_color="#1F2937", # gray-800
+            text_color="white",
+            border_color="#374151" # gray-700
+        )
         self.text_area.grid(row=2, column=0, sticky="nsew", padx=20, pady=5)
 
         # Buttons Frame
@@ -34,14 +43,31 @@ class PDFGeneratorView(ctk.CTkFrame):
         self.btn_frame.grid(row=3, column=0, sticky="ew", padx=20, pady=20)
 
         # Generate Button
-        self.generate_btn = ctk.CTkButton(self.btn_frame, text="Generar PDF", command=self.generate_pdf_action,
-                                          font=ctk.CTkFont(size=15, weight="bold"), height=45, width=150)
+        self.generate_btn = ctk.CTkButton(
+            self.btn_frame,
+            text="Generar PDF",
+            command=self.generate_pdf_action,
+            font=ctk.CTkFont(size=15, weight="bold"),
+            height=45, width=150,
+            fg_color="#3B82F6", # blue-500
+            hover_color="#2563EB", # blue-600
+            text_color="white"
+        )
         self.generate_btn.pack(side="right")
 
         # Clear Button
-        self.clear_btn = ctk.CTkButton(self.btn_frame, text="Limpiar", command=self.clear_text,
-                                       fg_color="transparent", border_width=2, text_color=("gray10", "gray90"),
-                                       hover_color=("gray70", "gray30"), height=45, width=120)
+        self.clear_btn = ctk.CTkButton(
+            self.btn_frame,
+            text="Limpiar",
+            command=self.clear_text,
+            font=ctk.CTkFont(size=15),
+            fg_color="transparent",
+            border_width=1,
+            border_color="#374151",
+            text_color="#9CA3AF",
+            hover_color="#374151",
+            height=45, width=120
+        )
         self.clear_btn.pack(side="left")
 
         # Load default data

@@ -47,18 +47,6 @@ class Sidebar(ctk.CTkFrame):
             btn = self.create_nav_button(label, view_name, icon, idx + 1)
             self.nav_buttons.append(btn)
 
-        # Daily Quest / Progress (Bottom)
-        self.quest_frame = ctk.CTkFrame(self, fg_color="#1F2937", corner_radius=10, border_width=1, border_color="#374151") # gray-800
-        self.quest_frame.grid(row=5, column=0, padx=20, pady=20, sticky="ew")
-
-        ctk.CTkLabel(self.quest_frame, text="Misión Diaria", font=ctk.CTkFont(size=12), text_color="#9CA3AF").pack(anchor="w", padx=10, pady=(10, 5))
-
-        self.progress = ctk.CTkProgressBar(self.quest_frame, height=8, progress_color="#22D3EE") # cyan-400
-        self.progress.set(0.75)
-        self.progress.pack(fill="x", padx=10, pady=5)
-
-        ctk.CTkLabel(self.quest_frame, text="3/4 Lecciones", font=ctk.CTkFont(size=10), text_color="#22D3EE").pack(anchor="e", padx=10, pady=(0, 10))
-
     def create_nav_button(self, label, view_name, icon, row):
         # State management for visual activation is handled by parent or updating styles here
         # For now, simplistic button
