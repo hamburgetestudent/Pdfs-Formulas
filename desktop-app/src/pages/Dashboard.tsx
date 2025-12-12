@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { BookOpen, Star, Lock, CheckCircle, Play } from 'lucide-react';
-import { QUIZ_DATA } from '../lib/quiz-data';
+import { quizData } from '../lib/quizData';
 import { useNavigate } from 'react-router-dom';
 
 interface LessonNode {
@@ -9,6 +9,7 @@ interface LessonNode {
     type: 'formulas' | 'quiz';
     locked: boolean;
     completed: boolean;
+    path: string;
 }
 
 interface UnitSection {
@@ -23,24 +24,29 @@ export default function Dashboard() {
     const units = useMemo(() => {
         const processedUnits: UnitSection[] = [];
 
-        Object.entries(QUIZ_DATA).forEach(([subject, categories]) => {
+        Object.entries(quizData).forEach(([subject, categories]) => {
             Object.entries(categories).forEach(([categoryName, topics]) => {
                 const nodes: LessonNode[] = [];
 
                 Object.keys(topics).forEach((topicName) => {
+                    // Node for Formulas (Study)
                     nodes.push({
                         id: `${categoryName}-${topicName}-study`,
                         title: `Estudiar: ${topicName}`,
                         type: 'formulas',
                         locked: false,
                         completed: false, // TODO: Hook up to user profile
+                        path: `/lesson/${encodeURIComponent(categoryName)}/${encodeURIComponent(topicName)}/study`
                     });
+
+                    // Node for Quiz (Practice)
                     nodes.push({
                         id: `${categoryName}-${topicName}-quiz`,
                         title: `Práctica: ${topicName}`,
                         type: 'quiz',
                         locked: false,
                         completed: false,
+                        path: `/lesson/${encodeURIComponent(categoryName)}/${encodeURIComponent(topicName)}/quiz`
                     });
                 });
 
@@ -90,7 +96,7 @@ export default function Dashboard() {
 
                                                 {/* Content Card */}
                                                 <div className="group relative z-10 w-full md:w-[45%] ml-12 md:ml-0 cursor-pointer"
-                                                    onClick={() => !node.locked && navigate('/lessons', { state: { lessonId: node.id } })}
+                                                    onClick={() => !node.locked && navigate(node.path)}
                                                 >
                                                     <div className={`
                             bg-[#1e1e1e] border border-[#333] p-5 rounded-xl transition-all duration-300
