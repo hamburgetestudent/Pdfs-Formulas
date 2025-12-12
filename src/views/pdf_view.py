@@ -2,8 +2,8 @@ import customtkinter as ctk
 from tkinter import messagebox, filedialog
 import os
 import io
-from pdf_builder import generate_pdf
-from utils import get_external_path, resource_path
+from core.pdf_builder import generate_pdf
+from core.utils import get_external_path, resource_path
 
 class PDFGeneratorView(ctk.CTkFrame):
     """

@@ -1,5 +1,5 @@
 import customtkinter as ctk
-from quiz_data import load_quiz_db
+from core.quiz_data import load_quiz_db
 
 class DashboardView(ctk.CTkScrollableFrame):
     """

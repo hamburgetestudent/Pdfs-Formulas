@@ -1,9 +1,9 @@
 import customtkinter as ctk
 import random
 from PIL import Image
-from renderer import render_formula_to_image
-from utils import load_config
-from gamification import UserProfile
+from core.renderer import render_formula_to_image
+from core.utils import load_config
+from core.gamification import UserProfile
 
 class LessonView(ctk.CTkFrame):
     """

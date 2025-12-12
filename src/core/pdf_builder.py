@@ -3,7 +3,7 @@ from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, 
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib import colors
 from reportlab.lib.units import inch
-from renderer import render_formula_to_image
+from .renderer import render_formula_to_image
 import io
 import html
 

@@ -1,6 +1,6 @@
 import json
 import os
-from utils import get_external_path, resource_path
+from .utils import get_external_path, resource_path
 
 def load_quiz_db():
     """

@@ -1,6 +1,6 @@
 import json
 import os
-from utils import get_external_path
+from .utils import get_external_path
 
 class UserProfile:
     def __init__(self):

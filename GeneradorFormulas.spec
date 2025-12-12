@@ -21,7 +21,7 @@ a = Analysis(
     hooksconfig={},
     runtime_hooks=[],
     # Exclude unnecessary accumulation of tests and Qt bindings
-    excludes=['matplotlib.tests', 'numpy.random._examples', 'PyQt5', 'PySide2', 'PySide6'],
+    excludes=['matplotlib.tests', 'numpy.random._examples', 'PyQt5', 'PySide2', 'PySide6', 'AppKit'],
     noarchive=False,
     optimize=0,
 )

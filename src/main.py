@@ -10,8 +10,8 @@ from views.lesson_view import LessonView
 from views.components.sidebar import Sidebar
 from views.components.topbar import TopBar
 
-from gamification import UserProfile
-from utils import load_config
+from core.gamification import UserProfile
+from core.utils import load_config
 
 # Global Theme
 ctk.set_appearance_mode("Dark")
