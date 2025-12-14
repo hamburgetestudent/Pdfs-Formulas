@@ -1,14 +1,17 @@
 import { Outlet } from 'react-router-dom';
 import { Sidebar } from './Sidebar';
+import { TopBar } from './TopBar';
 
 export function Layout() {
     return (
-        <div className="flex h-screen bg-[#111] text-white overflow-hidden font-sans">
+        <div className="min-h-screen bg-gray-950 text-white font-sans selection:bg-cyan-500/30">
             <Sidebar />
-            <main className="flex-1 overflow-auto relative">
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-900/5 to-purple-900/5 pointer-events-none" />
-                <Outlet />
-            </main>
+            <div className="md:ml-64 min-h-screen flex flex-col relative">
+                <TopBar />
+                <main className="flex-1 p-6 flex justify-center">
+                    <Outlet />
+                </main>
+            </div>
         </div>
     );
 }
