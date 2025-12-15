@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { Home, BookOpen, FileText, BarChart2, User, Settings } from 'lucide-react';
+import { BookOpen, Trophy, Zap, User, Terminal } from 'lucide-react';
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -9,47 +9,48 @@ function cn(...inputs: (string | undefined | null | false)[]) {
 
 export function Sidebar() {
     const navItems = [
-        { icon: Home, label: 'Inicio', to: '/' },
-        { icon: BookOpen, label: 'Lecciones', to: '/lessons' },
-        { icon: FileText, label: 'Generador PDF', to: '/pdf-generator' },
-        { icon: BarChart2, label: 'Estadísticas', to: '/stats' },
-        { icon: User, label: 'Perfil', to: '/profile' },
+        { icon: BookOpen, label: "Aprender", to: "/" },
+        { icon: Trophy, label: "Clasificación", to: "/leaderboard" },
+        { icon: Zap, label: "Desafíos", to: "/quests" },
+        { icon: User, label: "Perfil", to: "/profile" },
     ];
 
     return (
-        <aside className="w-64 bg-[#1e1e1e] border-r border-[#333] flex flex-col h-screen">
-            <div className="p-6">
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-                    PhysiCode
-                </h1>
+        <div className="hidden md:flex flex-col w-64 bg-gray-900 border-r border-gray-800 p-6 fixed h-full z-10">
+            <div className="flex items-center gap-3 mb-10">
+                <div className="bg-gradient-to-br from-purple-500 to-indigo-600 p-2 rounded-lg">
+                    <Terminal size={28} className="text-white" />
+                </div>
+                <h1 className="text-2xl font-bold text-white tracking-wider">PhysiCode</h1>
             </div>
 
-            <nav className="flex-1 px-4 space-y-2">
-                {navItems.map((item) => (
+            <nav className="space-y-4 flex-1">
+                {navItems.map((item, idx) => (
                     <NavLink
-                        key={item.to}
+                        key={idx}
                         to={item.to}
                         className={({ isActive }) =>
                             cn(
-                                "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group",
+                                "flex items-center gap-4 w-full p-3 rounded-xl transition-all duration-200",
                                 isActive
-                                    ? "bg-blue-600/10 text-blue-400 font-medium"
-                                    : "text-gray-400 hover:bg-[#252526] hover:text-white"
+                                    ? "bg-gray-800 text-cyan-400 border border-gray-700 font-semibold"
+                                    : "text-gray-400 hover:bg-gray-800 hover:text-white font-semibold"
                             )
                         }
                     >
-                        <item.icon className="w-5 h-5" />
+                        <item.icon size={22} />
                         <span>{item.label}</span>
                     </NavLink>
                 ))}
             </nav>
 
-            <div className="p-4 border-t border-[#333]">
-                <button className="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-white transition-colors w-full rounded-xl hover:bg-[#252526]">
-                    <Settings className="w-5 h-5" />
-                    <span>Configuración</span>
-                </button>
+            <div className="p-4 bg-gray-800 rounded-xl border border-gray-700">
+                <h3 className="text-sm text-gray-400 mb-2">Misión Diaria</h3>
+                <div className="w-full bg-gray-700 h-2 rounded-full overflow-hidden">
+                    <div className="bg-cyan-400 h-full w-3/4"></div>
+                </div>
+                <p className="text-xs text-right text-cyan-400 mt-1">3/4 Lecciones</p>
             </div>
-        </aside>
+        </div>
     );
 }
