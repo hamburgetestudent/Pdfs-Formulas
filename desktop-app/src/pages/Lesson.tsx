@@ -64,30 +64,19 @@ export default function Lesson() {
         }
     }, [isAnimating, lesson]);
 
-<<<<<<< HEAD
 
+    // Calcular progreso global en la secuencia de lecciones
     const { totalLessons, currentIndex, chain } = useMemo(() => {
         if (!lessonId) return { totalLessons: 1, currentIndex: 0, chain: [] };
 
-        // 1. Identify Group Prefix
-=======
-    // Calcular progreso global en la secuencia de lecciones
-    const { totalLessons, currentIndex } = useMemo(() => {
-        if (!lessonId) return { totalLessons: 1, currentIndex: 0 };
-
         // 1. Identificar prefijo del grupo (ej: 'Python-Fundamentos-Algoritmos')
->>>>>>> 5b7c915c9e23a1beb4349bb8e56c8cae6b835d92
         const prefix = lessonId.split('-').slice(0, -1).join('-');
 
         // 2. Obtener todas las lecciones de este grupo
         const groupLessons = Object.values(LESSONS_DATA).filter(l => l.id.startsWith(prefix));
 
-<<<<<<< HEAD
-        // 3. Reconstruct Chain
-=======
         // 3. Reconstruir la cadena
         // Encontrar el nodo inicial (ninguna otra lección apunta a él)
->>>>>>> 5b7c915c9e23a1beb4349bb8e56c8cae6b835d92
         const referencedIds = new Set(groupLessons.map(l => l.nextLessonId).filter(Boolean));
         const startLesson = groupLessons.find(l => !referencedIds.has(l.id));
 
@@ -98,14 +87,9 @@ export default function Lesson() {
 
         while (current) {
             chain.push(current);
-<<<<<<< HEAD
-            const currLesson = LESSONS_DATA[current];
-            if (currLesson?.nextLessonId?.startsWith(prefix)) {
-=======
             const currLesson = LESSONS_DATA[current] as any;
             // Solo seguir si la siguiente está en el mismo grupo (prevenir saltos de tema)
             if (currLesson && currLesson.nextLessonId && currLesson.nextLessonId.startsWith(prefix)) {
->>>>>>> 5b7c915c9e23a1beb4349bb8e56c8cae6b835d92
                 current = currLesson.nextLessonId;
             } else {
                 current = undefined;

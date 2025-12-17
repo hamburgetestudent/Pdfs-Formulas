@@ -18,17 +18,14 @@ const PDFGenerator = () => <div className="p-8"><h1 className="text-3xl font-bol
  */
 const Stats = () => <div className="p-8"><h1 className="text-3xl font-bold mb-4">Estadísticas</h1><p>Próximamente</p></div>;
 
-<<<<<<< HEAD
 import { DevModeProvider } from './context/DevModeContext';
 
-=======
 /**
  * Componente principal de la aplicación.
  * Configura el enrutador (HashRouter) y define las rutas principales dentro del diseño (Layout).
  *
  * @returns {JSX.Element} La estructura de enrutamiento de la aplicación.
  */
->>>>>>> 5b7c915c9e23a1beb4349bb8e56c8cae6b835d92
 function App() {
   return (
     <DevModeProvider>

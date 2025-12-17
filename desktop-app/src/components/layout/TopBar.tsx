@@ -17,7 +17,6 @@ export function TopBar() {
 
     return (
         <div className="sticky top-0 bg-gray-900/95 backdrop-blur z-20 border-b border-gray-800 p-4 flex justify-between md:justify-end gap-6 items-center w-full h-16">
-<<<<<<< HEAD
             <div className="flex items-center gap-2">
                 {/* Dev Mode Toggle */}
                 <button
@@ -29,9 +28,7 @@ export function TopBar() {
                 </button>
             </div>
 
-=======
             {/* Logo visible solo en móvil */}
->>>>>>> 5b7c915c9e23a1beb4349bb8e56c8cae6b835d92
             <div className="md:hidden flex items-center gap-2">
                 <Terminal size={24} className="text-purple-500" />
             </div>
