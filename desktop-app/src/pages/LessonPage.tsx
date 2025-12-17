@@ -6,21 +6,26 @@ import 'katex/dist/katex.min.css';
 import { quizData } from '../lib/quizData';
 import type { Topic, Question } from '../types';
 
+/**
+ * Componente que gestiona la página de la lección (modo estudio o quiz).
+ *
+ * @returns {JSX.Element} La página de la lección.
+ */
 export default function LessonPage() {
     const { category, topic, mode } = useParams<{ category: string; topic: string; mode: string }>();
     const navigate = useNavigate();
 
-    // State for Quiz
+    // Estado para el modo Quiz
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [selectedOption, setSelectedOption] = useState<string | null>(null);
     const [isAnswered, setIsAnswered] = useState(false);
     const [score, setScore] = useState(0);
     const [showResults, setShowResults] = useState(false);
 
-    // Retrieve Data
+    // Recuperar datos del tema
     const topicData: Topic | undefined = useMemo(() => {
         if (!category || !topic) return undefined;
-        // Search across all subjects for the category
+        // Buscar a través de todas las materias para encontrar la categoría
         for (const subjectName in quizData) {
             const subject = quizData[subjectName];
             if (subject[category] && subject[category][topic]) {
@@ -41,11 +46,18 @@ export default function LessonPage() {
         );
     }
 
+    /**
+     * Maneja la selección de una opción en el quiz.
+     * @param option La opción seleccionada.
+     */
     const handleOptionSelect = (option: string) => {
         if (isAnswered) return;
         setSelectedOption(option);
     };
 
+    /**
+     * Comprueba si la respuesta seleccionada es correcta.
+     */
     const handleCheckAnswer = () => {
         if (!selectedOption || isAnswered) return;
         setIsAnswered(true);
@@ -54,6 +66,9 @@ export default function LessonPage() {
         }
     };
 
+    /**
+     * Avanza a la siguiente pregunta o muestra los resultados si es la última.
+     */
     const handleNextQuestion = () => {
         if (currentQuestionIndex < topicData.questions.length - 1) {
             setCurrentQuestionIndex(prev => prev + 1);
@@ -64,6 +79,9 @@ export default function LessonPage() {
         }
     };
 
+    /**
+     * Reinicia el quiz para intentarlo de nuevo.
+     */
     const handleRetry = () => {
         setCurrentQuestionIndex(0);
         setSelectedOption(null);
@@ -72,7 +90,7 @@ export default function LessonPage() {
         setShowResults(false);
     };
 
-    // Render Formula View
+    // Renderizar Vista de Fórmulas (Modo Estudio)
     if (mode === 'study') {
         return (
             <div className="min-h-screen bg-[#111] text-gray-100 p-6">
@@ -120,7 +138,7 @@ export default function LessonPage() {
         );
     }
 
-    // Render Quiz View
+    // Renderizar Vista de Quiz
     const currentQuestion: Question = topicData.questions[currentQuestionIndex];
     const progress = ((currentQuestionIndex + 1) / topicData.questions.length) * 100;
 
@@ -162,7 +180,7 @@ export default function LessonPage() {
 
     return (
         <div className="min-h-screen bg-[#111] text-gray-100 p-6 flex flex-col">
-            {/* Header / Progress */}
+            {/* Cabecera / Progreso */}
             <div className="max-w-2xl mx-auto w-full mb-8">
                 <div className="flex justify-between items-center mb-4">
                     <button onClick={() => navigate('/')} className="text-gray-500 hover:text-white transition-colors">
@@ -180,7 +198,7 @@ export default function LessonPage() {
                 </div>
             </div>
 
-            {/* Question Card */}
+            {/* Tarjeta de Pregunta */}
             <div className="max-w-2xl mx-auto w-full flex-1 flex flex-col justify-center">
                 <div className="mb-8">
                     <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold mb-4
@@ -194,7 +212,7 @@ export default function LessonPage() {
                     </h2>
                 </div>
 
-                {/* Options */}
+                {/* Opciones */}
                 <div className="space-y-3 mb-8">
                     {currentQuestion.options.map((option, idx) => {
                         let stateStyles = "border-[#374151] hover:border-blue-500/50 hover:bg-blue-500/10";
@@ -225,7 +243,7 @@ export default function LessonPage() {
                 </div>
             </div>
 
-            {/* Footer Actions */}
+            {/* Acciones de pie de página */}
             <div className="max-w-2xl mx-auto w-full pt-6 border-t border-gray-800">
                 {!isAnswered ? (
                     <button

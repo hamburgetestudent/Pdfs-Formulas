@@ -4,33 +4,41 @@ import { useDevMode } from '../context/DevModeContext';
 import { useNavigate, useParams } from 'react-router-dom';
 import { LESSONS_DATA } from '../lib/lessons';
 
-// Helper for confetti
+// Ayudante para efectos de confeti
 const Confetti = () => <div className="fixed inset-0 pointer-events-none z-50 flex items-center justify-center overflow-hidden">
     <div className="absolute top-0 left-1/4 animate-bounce text-4xl">🎉</div>
     <div className="absolute top-10 right-1/4 animate-bounce delay-100 text-4xl">✨</div>
     <div className="absolute bottom-1/4 left-1/3 animate-bounce delay-200 text-4xl">⭐</div>
 </div>;
 
+/**
+ * Componente principal para visualizar una lección.
+ * Soporta múltiples tipos de lecciones: simulación, quiz, arrastrar y soltar (drag_drop), y teoría.
+ * Gestiona el estado interactivo, la validación de respuestas y la navegación entre lecciones.
+ *
+ * @returns {JSX.Element} La interfaz de usuario de la lección activa.
+ */
 export default function Lesson() {
     const navigate = useNavigate();
     const { lessonId } = useParams();
     const { isDevMode } = useDevMode();
     const lesson = lessonId ? LESSONS_DATA[lessonId] : null;
 
+    // Estados para la interacción del usuario
     const [selectedAnswer, setSelectedAnswer] = useState<any>(null);
-    const [userSequence, setUserSequence] = useState<string[]>([]); // For drag_drop
-    const [inlineAnswers, setInlineAnswers] = useState<Record<number, boolean | null>>({}); // For inline true_false blocks
+    const [userSequence, setUserSequence] = useState<string[]>([]); // Para drag_drop
+    const [inlineAnswers, setInlineAnswers] = useState<Record<number, boolean | null>>({}); // Para bloques true_false
     const [showFeedback, setShowFeedback] = useState<'success' | 'error' | 'trap' | null>(null);
     const [rocketPos, setRocketPos] = useState(0);
     const [isAnimating, setIsAnimating] = useState(false);
-    const [showSummary, setShowSummary] = useState(false); // New: Show summary screen
+    const [showSummary, setShowSummary] = useState(false); // Nuevo: Mostrar pantalla de resumen
 
-    // Stats tracking
-    const startTimeRef = useState(Date.now())[0]; // Constant for this mount
+    // Seguimiento de estadísticas
+    const startTimeRef = useState(Date.now())[0]; // Constante para este montaje
     const [mistakes, setMistakes] = useState(0);
 
 
-    // Reset state when lesson changes
+    // Reiniciar estado cuando cambia la lección
     useEffect(() => {
         setSelectedAnswer(null);
         setUserSequence([]);
@@ -40,7 +48,7 @@ export default function Lesson() {
         setIsAnimating(false);
     }, [lessonId]);
 
-    // Rocket animation simulation
+    // Simulación de animación del cohete
     useEffect(() => {
         if (isAnimating && lesson?.type === 'simulation') {
             const interval = setInterval(() => {
@@ -56,17 +64,30 @@ export default function Lesson() {
         }
     }, [isAnimating, lesson]);
 
+<<<<<<< HEAD
 
     const { totalLessons, currentIndex, chain } = useMemo(() => {
         if (!lessonId) return { totalLessons: 1, currentIndex: 0, chain: [] };
 
         // 1. Identify Group Prefix
+=======
+    // Calcular progreso global en la secuencia de lecciones
+    const { totalLessons, currentIndex } = useMemo(() => {
+        if (!lessonId) return { totalLessons: 1, currentIndex: 0 };
+
+        // 1. Identificar prefijo del grupo (ej: 'Python-Fundamentos-Algoritmos')
+>>>>>>> 5b7c915c9e23a1beb4349bb8e56c8cae6b835d92
         const prefix = lessonId.split('-').slice(0, -1).join('-');
 
-        // 2. Get all lessons in this group
+        // 2. Obtener todas las lecciones de este grupo
         const groupLessons = Object.values(LESSONS_DATA).filter(l => l.id.startsWith(prefix));
 
+<<<<<<< HEAD
         // 3. Reconstruct Chain
+=======
+        // 3. Reconstruir la cadena
+        // Encontrar el nodo inicial (ninguna otra lección apunta a él)
+>>>>>>> 5b7c915c9e23a1beb4349bb8e56c8cae6b835d92
         const referencedIds = new Set(groupLessons.map(l => l.nextLessonId).filter(Boolean));
         const startLesson = groupLessons.find(l => !referencedIds.has(l.id));
 
@@ -77,8 +98,14 @@ export default function Lesson() {
 
         while (current) {
             chain.push(current);
+<<<<<<< HEAD
             const currLesson = LESSONS_DATA[current];
             if (currLesson?.nextLessonId?.startsWith(prefix)) {
+=======
+            const currLesson = LESSONS_DATA[current] as any;
+            // Solo seguir si la siguiente está en el mismo grupo (prevenir saltos de tema)
+            if (currLesson && currLesson.nextLessonId && currLesson.nextLessonId.startsWith(prefix)) {
+>>>>>>> 5b7c915c9e23a1beb4349bb8e56c8cae6b835d92
                 current = currLesson.nextLessonId;
             } else {
                 current = undefined;
@@ -93,18 +120,18 @@ export default function Lesson() {
         };
     }, [lessonId]);
 
+    /**
+     * Valida la respuesta del usuario según el tipo de lección.
+     */
     const handleCheck = () => {
         if (!lesson) return;
 
-        // Theory Validation
+        // Validación de Teoría
         if (lesson.type === 'theory') {
-            // If it has interactive blocks (true_false), validate them
+            // Si tiene bloques interactivos (true_false), validarlos
             const interactiveBlocks = lesson.theoryBlocks?.filter(b => b.type === 'true_false') || [];
             if (interactiveBlocks.length > 0) {
-                // Find index of each interactive block in the original array to check inlineAnswers
-                // We need to map the original indices. 
-                // A better way: iterate all blocks and if type is true_false, check inlineAnswers[idx]
-
+                // Verificar si todas las respuestas inline son correctas
                 let allCorrect = true;
                 lesson.theoryBlocks?.forEach((block, idx) => {
                     if (block.type === 'true_false') {
@@ -117,53 +144,38 @@ export default function Lesson() {
                 if (allCorrect) {
                     setShowFeedback('success');
                 } else {
-                    // We can set a custom error message for theory
+                    // Podríamos establecer un mensaje de error personalizado para teoría
                     setShowFeedback('error');
-                    // Note: We might want to render a specific error. 
-                    // Since showFeedback='error' uses generic message or lesson config, 
-                    // we might need to update the render part to show a specific string if it's a theory error.
                 }
                 return;
             }
 
-            // Normal theory (read-only) always success
+            // Teoría normal (solo lectura) siempre es éxito
             setShowFeedback('success');
             return;
         }
 
         let isCorrect = false;
-        let successMsg = '';
-        let errorMsg = ''; // Generic error message
-        let errorTitle = 'Inténtalo de nuevo'; // Default error title
         let isTrap = false;
 
         if (lesson.type === 'simulation' && lesson.simulationConfig) {
             isCorrect = lesson.simulationConfig.verifyFunction(selectedAnswer);
-            successMsg = lesson.simulationConfig.successMessage;
-            errorMsg = lesson.simulationConfig.errorMessage;
         } else if (lesson.type === 'quiz' && lesson.quizConfig) {
             const option = lesson.quizConfig.options.find(o => o.id === selectedAnswer);
             isCorrect = option?.correct || false;
-            successMsg = lesson.quizConfig.successMessage;
-            errorMsg = lesson.quizConfig.errorMessage;
         } else if (lesson.type === 'drag_drop' && lesson.dragDropConfig) {
-            // Check for trap first (if trap is at index 0 as requested)
+            // Comprobar trampa primero (si la trampa está en el índice 0)
             if (lesson.dragDropConfig.trapId && userSequence[0] === lesson.dragDropConfig.trapId) {
                 isTrap = true;
-                errorMsg = lesson.dragDropConfig.trapMessage || 'Error de lógica';
-                errorTitle = '¡Un momento!';
             } else {
-                // Check exact sequence match
+                // Comprobar coincidencia exacta de secuencia
                 const target = lesson.dragDropConfig.correctSequence;
                 if (userSequence.length !== target.length) {
-                    errorMsg = "Te faltan o sobran pasos. Asegúrate de usar todos los pasos necesarios.";
+                    isCorrect = false;
                 } else {
                     const match = userSequence.every((id, index) => id === target[index]);
                     if (match) {
                         isCorrect = true;
-                        successMsg = lesson.dragDropConfig.successMessage;
-                    } else {
-                        errorMsg = lesson.dragDropConfig.errorMessage;
                     }
                 }
             }
@@ -183,11 +195,14 @@ export default function Lesson() {
         }
     };
 
+    /**
+     * Maneja la navegación a la siguiente lección o muestra el resumen.
+     */
     const handleContinue = () => {
         if (showFeedback === 'success') {
             const timeSpent = Date.now() - startTimeRef;
 
-            // Save/Update stats in localStorage
+            // Guardar/Actualizar estadísticas en localStorage
             if (lessonId) {
                 const prefix = lessonId.split('-').slice(0, -1).join('-');
                 const storageKey = `stats_${prefix}`;
@@ -209,7 +224,7 @@ export default function Lesson() {
             if (lesson?.nextLessonId) {
                 navigate(`/lessons/${lesson.nextLessonId}`);
             } else {
-                // End of module - Check for Achievements
+                // Fin del módulo - Verificar Logros
                 let currentAchievements: string[] = [];
                 try {
                     currentAchievements = JSON.parse(localStorage.getItem('achievements') || '[]');
@@ -220,13 +235,13 @@ export default function Lesson() {
                 const newAchievements = [...currentAchievements];
                 let achievementUnlocked = false;
 
-                // 1. Generic "First Steps"
+                // 1. "Primeros Pasos" Genérico
                 if (!newAchievements.includes('first_steps')) {
                     newAchievements.push('first_steps');
                     achievementUnlocked = true;
                 }
 
-                // 2. Specific "Algorithmic Thinking I"
+                // 2. "Pensamiento Algorítmico I" Específico
                 const prefix = lessonId?.split('-').slice(0, -1).join('-');
                 if (prefix === 'Python-Fundamentos-Algoritmos' && !newAchievements.includes('algo_1')) {
                     newAchievements.push('algo_1');
@@ -235,8 +250,6 @@ export default function Lesson() {
 
                 if (achievementUnlocked) {
                     localStorage.setItem('achievements', JSON.stringify(newAchievements));
-                    // Optional: You could trigger a small toast here if desired, 
-                    // but the Profile page will show it clearly.
                 }
 
                 setShowSummary(true);
@@ -246,6 +259,9 @@ export default function Lesson() {
         }
     };
 
+    /**
+     * Añade un elemento a la secuencia del usuario en ejercicios drag_drop.
+     */
     const addToSequence = (id: string) => {
         if (!userSequence.includes(id)) {
             setUserSequence([...userSequence, id]);
@@ -253,16 +269,19 @@ export default function Lesson() {
         }
     };
 
+    /**
+     * Elimina un elemento de la secuencia del usuario.
+     */
     const removeFromSequence = (id: string) => {
         setUserSequence(userSequence.filter(item => item !== id));
         setShowFeedback(null);
     };
 
-    // Calculate progress based on lesson type
+    // Calcular progreso visual basado en el tipo de lección
     const progress = (() => {
         if (!lesson) return 0;
 
-        let internalProgress = 0; // 0 to 1
+        let internalProgress = 0; // 0 a 1
 
         if (lesson.type === 'theory') {
             const interactiveBlocks = lesson.theoryBlocks?.filter(b => b.type === 'true_false') || [];
@@ -279,18 +298,14 @@ export default function Lesson() {
             if (showFeedback === 'success') internalProgress = 1;
         } else if (lesson.type === 'quiz' || lesson.type === 'simulation') {
             if (showFeedback === 'success') internalProgress = 1;
-            // Partial for selecting answer
+            // Parcial por seleccionar respuesta
             else if (selectedAnswer !== null) internalProgress = 0.5;
             else internalProgress = 0;
         }
 
-        // Global formula: ((currentIndex + internalProgress) / totalLessons) * 100
+        // Fórmula global
         return Math.min(100, ((currentIndex + internalProgress) / totalLessons) * 100);
     })();
-
-    // Calculate Global Progress... (kept same)
-
-    // ...
 
     if (showSummary) {
         const prefix = lessonId?.split('-').slice(0, -1).join('-') || 'default';
@@ -306,9 +321,7 @@ export default function Lesson() {
         const minutes = Math.floor(seconds / 60);
         const remainingSeconds = seconds % 60;
 
-        // Simple accuracy: Start at 100%, deduct 10% per mistake, min 0%
-        // Or: Correct actions / Total actions attempted
-        // Let's do: 100% - (mistakes * 5)% 
+        // Precisión simple: Comienza en 100%, reduce 10% por error, min 0%
         const accuracy = Math.max(0, 100 - (stats.mistakes * 10));
 
         return (
@@ -345,7 +358,7 @@ export default function Lesson() {
 
                     <button
                         onClick={() => {
-                            localStorage.removeItem(storageKey); // Clear stats
+                            localStorage.removeItem(storageKey); // Limpiar estadísticas
                             navigate('/');
                         }}
                         className="w-full py-4 rounded-xl font-bold text-lg bg-white text-black hover:bg-gray-200 transition-colors shadow-[0_0_20px_rgba(255,255,255,0.2)]"
@@ -371,7 +384,7 @@ export default function Lesson() {
         <div className="w-full h-[calc(100vh-100px)] overflow-y-auto flex flex-col pb-40 relative" id="lesson-container">
             {showFeedback === 'success' && <Confetti />}
 
-            {/* Nav Header */}
+            {/* Cabecera de navegación */}
             <div className="max-w-3xl mx-auto w-full px-4 pt-4">
                 <button
                     onClick={() => navigate('/')}
@@ -385,7 +398,7 @@ export default function Lesson() {
                         <h1 className="text-2xl font-bold text-white mb-2">{lesson.title}</h1>
                         <p className="text-gray-400 mb-6">{lesson.instructions}</p>
                     </div>
-                    {/* Robot Avatar for Drag Drop */}
+                    {/* Avatar de Robot para Drag Drop */}
                     {lesson.type === 'drag_drop' && (
                         <div className={`transition-transform duration-500 ${showFeedback === 'trap' || showFeedback === 'error' ? 'shake-animation' : ''}`}>
                             <div className={`p-4 rounded-full border-4 ${showFeedback === 'success' ? 'bg-green-500 border-green-300' :
@@ -401,7 +414,7 @@ export default function Lesson() {
             </div>
 
             <div className="max-w-3xl mx-auto w-full flex-1 flex flex-col px-4">
-                {/* Progress Bar (Dynamic) */}
+                {/* Barra de Progreso Dinámica */}
                 <div className="w-full h-2 bg-gray-800 rounded-full mb-8 overflow-hidden">
                     <div
                         className="h-full bg-gradient-to-r from-green-400 to-emerald-500 transition-all duration-500 ease-out"
@@ -410,9 +423,9 @@ export default function Lesson() {
                 </div>
 
                 <div className="flex-1 flex flex-col gap-6">
-                    {/* Dynamic Content Area */}
+                    {/* Área de Contenido Dinámico */}
 
-                    {/* SIMULATION */}
+                    {/* SIMULACIÓN */}
                     {lesson.type === 'simulation' && lesson.simulationConfig && (
                         <>
                             <div className="bg-gray-800 rounded-xl p-8 h-64 flex items-end justify-center relative overflow-hidden border border-gray-700 shadow-inner">
@@ -496,10 +509,10 @@ export default function Lesson() {
                         </div>
                     )}
 
-                    {/* DRAG AND DROP */}
+                    {/* ARRASTRAR Y SOLTAR (DRAG AND DROP) */}
                     {lesson.type === 'drag_drop' && lesson.dragDropConfig && (
                         <div className="flex flex-col md:flex-row gap-8 flex-1">
-                            {/* Pool */}
+                            {/* Reserva (Pool) */}
                             <div className="flex-1 md:border-r border-gray-800 md:pr-4">
                                 <h3 className="text-cyan-400 font-bold mb-4 uppercase text-xs tracking-wider">Pasos Disponibles</h3>
                                 <div className="space-y-3">
@@ -519,7 +532,7 @@ export default function Lesson() {
                                 </div>
                             </div>
 
-                            {/* Sequence */}
+                            {/* Secuencia */}
                             <div className="flex-1 bg-gray-900/50 rounded-2xl p-6 border-2 border-dashed border-gray-700 min-h-[300px] shadow-inner">
                                 <h3 className="text-purple-400 font-bold mb-4 uppercase text-xs tracking-wider flex items-center gap-2">
                                     Tu Algoritmo <span className="text-gray-600 text-[10px]">(Orden de ejecución)</span>
@@ -552,7 +565,7 @@ export default function Lesson() {
                         </div>
                     )}
 
-                    {/* THEORY */}
+                    {/* TEORÍA */}
                     {lesson.type === 'theory' && (
                         <div className="flex flex-col gap-6">
                             {lesson.theoryBlocks ? (
@@ -651,7 +664,7 @@ export default function Lesson() {
                 </div>
             </div>
 
-            {/* Sticky Action Footer */}
+            {/* Pie de acción fijo (Sticky) */}
             <div className={`fixed bottom-0 left-0 md:left-64 right-0 p-6 border-t backdrop-blur-md transition-colors duration-300 z-40 ${showFeedback === 'success' ? 'bg-green-900/90 border-green-500/50' :
                 showFeedback === 'trap' ? 'bg-amber-900/90 border-amber-500/50' :
                     showFeedback === 'error' ? 'bg-red-900/90 border-red-500/50' :

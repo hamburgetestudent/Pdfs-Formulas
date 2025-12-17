@@ -1,16 +1,32 @@
+/**
+ * Representa una pregunta individual dentro de un cuestionario.
+ */
 export interface Question {
+    /** Identificador único de la pregunta. */
     id: string;
+    /** Texto de la pregunta. */
     text: string;
+    /** Lista de opciones de respuesta. */
     options: string[];
-    correct: number; // index
+    /** Índice de la opción correcta en la lista (basado en 0). */
+    correct: number;
+    /** Explicación opcional que aparece tras responder. */
     explanation?: string;
 }
 
+/**
+ * Contenido educativo de una lección, incluyendo fórmulas y preguntas.
+ */
 export interface LessonContent {
+    /** Lista de fórmulas relacionadas con la lección. */
     formulas: { latex: string; description: string }[];
+    /** Lista de preguntas de evaluación. */
     questions: Question[];
 }
 
+/**
+ * Estructura jerárquica de datos del cuestionario: Materia -> Unidad -> Tema -> Contenido.
+ */
 export interface QuizData {
     [subject: string]: {
         [unit: string]: {
@@ -19,6 +35,9 @@ export interface QuizData {
     }
 }
 
+/**
+ * Base de datos principal de cuestionarios y fórmulas organizada por materias.
+ */
 export const QUIZ_DATA: QuizData = {
     "Física": {
         "Mecánica": {

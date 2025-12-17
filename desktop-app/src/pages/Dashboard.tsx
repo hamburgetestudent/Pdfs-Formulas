@@ -1,8 +1,11 @@
 import { useMemo, useState, useEffect } from 'react';
-import { BookOpen, Lock, CheckCircle, Play, Star, Zap, Code } from 'lucide-react';
+import { BookOpen, Lock, CheckCircle, Star, Zap, Code } from 'lucide-react';
 import { QUIZ_DATA } from '../lib/quiz-data';
 import { useNavigate } from 'react-router-dom';
 
+/**
+ * Tipo que representa una lección visual en el mapa de progreso.
+ */
 type LessonType = {
     id: string;
     title: string;
@@ -11,6 +14,9 @@ type LessonType = {
     completed: boolean;
 };
 
+/**
+ * Interfaz para una sección de unidad que agrupa lecciones.
+ */
 interface UnitSection {
     title: string;
     description: string;
@@ -18,13 +24,20 @@ interface UnitSection {
     lessons: LessonType[];
 }
 
+/**
+ * Componente principal del tablero de aprendizaje (Dashboard).
+ * Muestra las materias disponibles y un mapa interactivo de lecciones estilo árbol de habilidades.
+ * Permite navegar entre lecciones y visualizar el progreso.
+ *
+ * @returns {JSX.Element} El tablero interactivo.
+ */
 export default function Dashboard() {
     const navigate = useNavigate();
 
-    // Get available subjects
+    // Obtener las materias disponibles de la base de datos de cuestionarios
     const subjects = useMemo(() => Object.keys(QUIZ_DATA), []);
 
-    // State with Persistence
+    // Estado con persistencia en localStorage para recordar la materia seleccionada
     const [selectedSubject, setSelectedSubject] = useState<string>(() => {
         const saved = localStorage.getItem('selectedSubject');
         return saved && subjects.includes(saved) ? saved : subjects[0];
@@ -35,28 +48,29 @@ export default function Dashboard() {
     }, [selectedSubject]);
 
 
+    // Procesamiento de unidades y lecciones para la materia seleccionada
     const units = useMemo(() => {
         const processedUnits: UnitSection[] = [];
         let globalLessonIndex = 0;
 
-        // Only process the selected subject
+        // Solo procesar la materia seleccionada
         const subjectData = QUIZ_DATA[selectedSubject];
         if (subjectData) {
             Object.entries(subjectData).forEach(([categoryName, topics]) => {
                 const lessons: LessonType[] = [];
 
                 Object.keys(topics).forEach((topicName) => {
-                    // Add study lesson
+                    // Agregar lección de estudio
                     lessons.push({
-                        id: `${selectedSubject}-${categoryName}-${topicName}-study`, // Updated ID schema to be unique per subject
+                        id: `${selectedSubject}-${categoryName}-${topicName}-study`, // Esquema de ID actualizado para ser único por materia
                         title: `Estudiar: ${topicName}`,
                         topic: topicName,
-                        locked: globalLessonIndex > 0, // Mock locking
+                        locked: globalLessonIndex > 0, // Bloqueo simulado
                         completed: false,
                     });
                     globalLessonIndex++;
 
-                    // Add quiz lesson
+                    // Agregar lección de práctica (quiz)
                     lessons.push({
                         id: `${selectedSubject}-${categoryName}-${topicName}-quiz`,
                         title: `Práctica: ${topicName}`,
@@ -70,7 +84,7 @@ export default function Dashboard() {
                 processedUnits.push({
                     title: categoryName,
                     description: `Temas de ${selectedSubject}`,
-                    color: selectedSubject === 'Python' ? "from-yellow-500 to-orange-500" : "from-blue-600 to-cyan-500", // Dynamic color per subject
+                    color: selectedSubject === 'Python' ? "from-yellow-500 to-orange-500" : "from-blue-600 to-cyan-500", // Color dinámico según la materia
                     lessons,
                 });
             });
@@ -79,14 +93,14 @@ export default function Dashboard() {
         return processedUnits;
     }, [selectedSubject]);
 
-    // Snake Path Constants
+    // Constantes para el trazado del camino de serpiente (Snake Path)
     const VERTICAL_SPACING = 120;
-    const AMPLITUDE = 80; // Horizontal sway
+    const AMPLITUDE = 80; // Oscilación horizontal
 
     return (
         <div className="flex flex-col items-center pb-40 pt-2 w-full overflow-x-hidden">
 
-            {/* Subject Selector Tabs */}
+            {/* Selector de Materias (Pestañas) */}
             <div className="flex gap-4 mb-8 bg-gray-900/50 p-2 rounded-full border border-white/5 backdrop-blur-sm sticky top-0 z-50 shadow-xl">
                 {subjects.map((subject) => (
                     <button
@@ -104,19 +118,19 @@ export default function Dashboard() {
                 ))}
             </div>
 
+            {/* Renderizado de unidades */}
             {units.map((unit, unitIdx) => {
                 const totalHeight = (unit.lessons.length) * VERTICAL_SPACING + 100;
 
-                // Helper to calculate position for index
+                // Ayudante para calcular la posición de un índice
                 const getPos = (i: number) => {
-                    const y = i * VERTICAL_SPACING + 80; // Start with more offset
-                    // Sine wave pattern: 0 -> Center, 1 -> Right, 2 -> Center, 3 -> Left
-                    // We modify sine to achieve this specific "Duolingo" zigzag
+                    const y = i * VERTICAL_SPACING + 80; // Desplazamiento inicial
+                    // Patrón de onda sinusoidal: para lograr el zigzag estilo "Duolingo"
                     const xOffset = Math.sin(i * Math.PI / 2) * AMPLITUDE;
                     return { x: xOffset, y };
                 };
 
-                // Generate SVG Path
+                // Generar el trazado SVG (Path)
                 let pathD = "";
                 for (let i = 0; i < unit.lessons.length; i++) {
                     const curr = getPos(i);
@@ -124,14 +138,14 @@ export default function Dashboard() {
                         pathD += `M ${curr.x} ${curr.y}`;
                     } else {
                         const prev = getPos(i - 1);
-                        // Cubic Bezier control points for smooth curve
+                        // Puntos de control para curvas Bezier cúbicas
                         const cp1y = prev.y + VERTICAL_SPACING * 0.5;
                         const cp2y = curr.y - VERTICAL_SPACING * 0.5;
                         pathD += ` C ${prev.x} ${cp1y}, ${curr.x} ${cp2y}, ${curr.x} ${curr.y}`;
                     }
                 }
 
-                // Extend path a bit at the end
+                // Extender el camino un poco al final
                 if (unit.lessons.length > 0) {
                     const last = getPos(unit.lessons.length - 1);
                     pathD += ` L ${last.x} ${last.y + 60}`;
@@ -139,7 +153,7 @@ export default function Dashboard() {
 
                 return (
                     <div key={unitIdx} className="w-full max-w-md mb-24 relative">
-                        {/* Unit Header */}
+                        {/* Encabezado de la Unidad */}
                         <div className={`bg-gradient-to-r ${unit.color} p-6 rounded-3xl mb-12 shadow-xl shadow-cyan-900/20 text-white flex justify-between items-center relative z-20 mx-4 border border-white/10`}>
                             <div>
                                 <h2 className="text-2xl font-bold tracking-tight">{unit.title}</h2>
@@ -148,15 +162,15 @@ export default function Dashboard() {
                             <BookOpen size={28} className="opacity-90 drop-shadow-md" />
                         </div>
 
-                        {/* Lessons Container */}
+                        {/* Contenedor de Lecciones */}
                         <div className="relative flex justify-center" style={{ height: totalHeight }}>
 
-                            {/* SVG Snake Path Layer */}
+                            {/* Capa de Camino SVG (Snake Path) */}
                             <svg
                                 className="absolute top-0 left-1/2 -translate-x-1/2 w-[300px] h-full pointer-events-none -z-10"
                                 overflow="visible"
                             >
-                                {/* Shadow/Outer Stroke */}
+                                {/* Sombra/Borde exterior */}
                                 <path
                                     d={pathD}
                                     fill="none"
@@ -165,7 +179,7 @@ export default function Dashboard() {
                                     strokeLinecap="round"
                                     className="drop-shadow-sm opacity-50"
                                 />
-                                {/* Inner Path (Snake Body) */}
+                                {/* Camino interior (Cuerpo de la serpiente) */}
                                 <path
                                     d={pathD}
                                     fill="none"
@@ -177,11 +191,11 @@ export default function Dashboard() {
                                 />
                             </svg>
 
-                            {/* Lessons Buttons */}
+                            {/* Botones de Lecciones */}
                             {unit.lessons.map((lesson, idx) => {
                                 const pos = getPos(idx);
                                 const isActive = !lesson.locked && !lesson.completed;
-                                const isCompleted = lesson.completed; // Simulate completion visually for now if needed
+                                const isCompleted = lesson.completed; // Simulación visual de completado
 
                                 return (
                                     <div
@@ -190,7 +204,7 @@ export default function Dashboard() {
                                         style={{ left: `calc(50% + ${pos.x}px)`, top: pos.y }}
                                     >
                                         <div className="relative group">
-                                            {/* Tooltip for Active */}
+                                            {/* Tooltip para lección activa */}
                                             {isActive && (
                                                 <div className="absolute -top-14 left-1/2 -translate-x-1/2 bg-white text-cyan-900 text-sm font-extrabold py-2 px-4 rounded-xl animate-bounce z-30 shadow-lg whitespace-nowrap">
                                                     EMPEZAR
@@ -216,11 +230,11 @@ export default function Dashboard() {
                                                     lesson.locked ? <Lock size={28} /> :
                                                         <Star size={32} fill="currentColor" />}
 
-                                                {/* Button Highlights */}
+                                                {/* Brillos del botón */}
                                                 <div className="absolute top-2 left-3 w-4 h-4 rounded-full bg-white opacity-20"></div>
                                             </button>
 
-                                            {/* Label below button */}
+                                            {/* Etiqueta debajo del botón */}
                                             <div className="absolute top-full mt-3 left-1/2 -translate-x-1/2 text-center w-32 pointer-events-none">
                                                 <span className={`text-sm font-bold drop-shadow-md ${isActive ? 'text-white' : 'text-gray-500'}`}>
                                                     {lesson.topic}

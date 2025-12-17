@@ -1,5 +1,9 @@
 import type { QuizDB } from '../types';
 
+/**
+ * Base de datos extendida de cuestionarios con fórmulas matemáticas detalladas y preguntas clasificadas.
+ * Organizada por Materia -> Categoría -> Tema.
+ */
 export const quizData: QuizDB = {
     "Física": {
         "Mecánica": {

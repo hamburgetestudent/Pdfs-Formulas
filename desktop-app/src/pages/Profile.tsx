@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import { ACHIEVEMENTS_DATA } from '../lib/achievements';
 import { Trophy, Star, PenLine, Check, X as XIcon, Upload, Lock } from 'lucide-react';
 
+// Avatares predefinidos disponibles
 const PRESET_AVATARS = [
     { id: 'avatar_1', src: '/avatars/avatar_1.jpg' },
     { id: 'avatar_2', src: '/avatars/avatar_2.jpg' },
@@ -9,17 +10,25 @@ const PRESET_AVATARS = [
     { id: 'avatar_4', src: '/avatars/avatar_4.jpg' },
 ];
 
+/**
+ * Componente de página de Perfil de Usuario.
+ * Muestra la información del usuario (nombre, avatar, nivel, XP) y los logros desbloqueados.
+ * Permite editar el nombre y cambiar el avatar (predefinido o subido).
+ *
+ * @returns {JSX.Element} La página de perfil.
+ */
 export default function Profile() {
     const [unlocked, setUnlocked] = useState<string[]>([]);
     const [stats, setStats] = useState({ totalXP: 0, level: 1, completedLessons: 0 });
 
-    // Profile State
+    // Estado del Perfil
     const [profile, setProfile] = useState({ name: 'Estudiante de Física', avatar: 'avatar_1' });
     const [isEditingName, setIsEditingName] = useState(false);
     const [tempName, setTempName] = useState('');
     const [showAvatarMenu, setShowAvatarMenu] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
+    // Cargar datos al montar el componente
     useEffect(() => {
         const safeParse = (key: string, fallback: any) => {
             try {
@@ -31,30 +40,30 @@ export default function Profile() {
             }
         };
 
-        // Load unlocks
+        // Cargar logros desbloqueados
         const storedAchievements = safeParse('achievements', []);
         setUnlocked(storedAchievements);
 
-        // Load Profile
+        // Cargar Perfil
         const storedProfile = safeParse('userProfile', { name: "Estudiante de Física", avatar: "avatar_1" });
         setProfile(storedProfile);
 
-        // Load stats from lesson keys (aggregating)
+        // Cargar estadísticas agregando datos de lecciones
         let totalTime = 0;
         let completed = 0;
 
-        // Iterate localStorage to find stats_ keys
+        // Iterar localStorage para encontrar claves stats_
         for (let i = 0; i < localStorage.length; i++) {
             const key = localStorage.key(i);
             if (key?.startsWith('stats_')) {
                 const data = safeParse(key, {});
                 totalTime += data.totalTime || 0;
-                completed += data.completed || 0; // Note: completed in stats is individual steps, maybe we want lessons
+                completed += data.completed || 0;
             }
         }
 
-        // Simple XP Calculation: 100 XP per completed lesson + Achievement Rewards
-        let xp = completed * 10; // 10 XP per step
+        // Cálculo simple de XP: 100 XP por lección completada + Recompensas de Logros
+        let xp = completed * 10; // 10 XP por paso
 
         storedAchievements.forEach((id: string) => {
             const ach = ACHIEVEMENTS_DATA.find(a => a.id === id);
@@ -71,11 +80,17 @@ export default function Profile() {
 
     }, []);
 
+    /**
+     * Guarda el perfil actualizado en localStorage.
+     */
     const saveProfile = (newProfile: typeof profile) => {
         setProfile(newProfile);
         localStorage.setItem('userProfile', JSON.stringify(newProfile));
     };
 
+    /**
+     * Maneja la subida de una imagen de avatar personalizada.
+     */
     const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
@@ -89,26 +104,29 @@ export default function Profile() {
         }
     };
 
+    /**
+     * Obtiene la fuente de la imagen del avatar según si es predefinido, subido o generado.
+     */
     const getAvatarSrc = (avatarId: string) => {
         if (avatarId.startsWith('data:')) return avatarId; // Base64
         if (avatarId.startsWith('avatar_')) return `/avatars/${avatarId}.jpg`; // Local Preset
-        // Fallback for old DiceBear seeds if any
+        // Fallback para semillas antiguas de DiceBear si las hay
         return `https://api.dicebear.com/7.x/avataaars/svg?seed=${avatarId}`;
     };
 
     const nextLevelXP = stats.level * 500;
-    const progressXP = (stats.totalXP % 500) / 5; // Percentage (500 is 100%)
+    const progressXP = (stats.totalXP % 500) / 5; // Porcentaje (500 es 100%)
 
     return (
         <div className="max-w-4xl w-full text-white pb-20">
-            {/* Header Profile */}
+            {/* Cabecera del Perfil */}
             <div className="bg-gradient-to-r from-gray-900 to-gray-800 rounded-3xl p-8 mb-8 border border-gray-700 shadow-xl flex flex-col md:flex-row items-center gap-8 relative">
-                {/* Background Decor - Wrapped to prevent overflow clipping of modals */}
+                {/* Decoración de Fondo */}
                 <div className="absolute inset-0 overflow-hidden rounded-3xl pointer-events-none">
                     <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2"></div>
                 </div>
 
-                {/* Avatar Section */}
+                {/* Sección de Avatar */}
                 <div className="relative group cursor-pointer" onClick={() => setShowAvatarMenu(!showAvatarMenu)}>
                     <div className="w-32 h-32 rounded-full p-1 bg-gradient-to-br from-cyan-400 to-purple-500 shadow-lg relative z-10 transition-transform group-hover:scale-105">
                         <img
@@ -122,7 +140,7 @@ export default function Profile() {
                     </div>
                 </div>
 
-                {/* Avatar Selection Modal/Popover */}
+                {/* Menú de Selección de Avatar (Modal/Popover) */}
                 {showAvatarMenu && (
                     <div className="absolute top-full left-0 z-50 mt-2 p-4 bg-gray-800 border border-gray-700 rounded-2xl shadow-2xl animate-in zoom-in-95 duration-200 w-full max-w-sm">
                         <h3 className="text-sm font-bold text-gray-400 mb-3 uppercase tracking-wider">Selecciona tu avatar</h3>
@@ -207,11 +225,11 @@ export default function Profile() {
                 </div>
             </div>
 
-            {/* Achievements Section */}
+            {/* Sección de Logros */}
             <div>
                 <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
                     <Trophy className="text-yellow-400" />
-                    Achievements <span className="text-sm text-gray-500 font-normal">({unlocked.length} / {ACHIEVEMENTS_DATA.length})</span>
+                    Logros <span className="text-sm text-gray-500 font-normal">({unlocked.length} / {ACHIEVEMENTS_DATA.length})</span>
                 </h2>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

@@ -1,15 +1,27 @@
 
-import { Divide, Zap, Brain, Code, Rocket, BookOpen } from 'lucide-react';
+import { Zap, Brain, Code, Rocket, BookOpen } from 'lucide-react';
 
+/**
+ * Interfaz que define la estructura de un logro en el sistema de gamificación.
+ */
 export interface Achievement {
+    /** Identificador único del logro. */
     id: string;
+    /** Título visible del logro. */
     title: string;
+    /** Descripción de cómo obtener el logro. */
     description: string;
-    icon: any; // Lucide icon
-    color: string; // Tailwind class
+    /** Componente de icono (Lucide icon). */
+    icon: any;
+    /** Clase de color de Tailwind CSS para el icono. */
+    color: string;
+    /** Recompensa de experiencia opcional al desbloquear el logro. */
     xpReward?: number;
 }
 
+/**
+ * Lista constante de logros disponibles en la aplicación.
+ */
 export const ACHIEVEMENTS_DATA: Achievement[] = [
     {
         id: 'algo_1',

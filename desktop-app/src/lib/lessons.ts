@@ -1,12 +1,28 @@
 
+/**
+ * Tipo de lección disponible en la aplicación.
+ * - 'simulation': Simulación interactiva.
+ * - 'quiz': Cuestionario simple.
+ * - 'theory': Contenido teórico rico.
+ * - 'drag_drop': Ejercicio de ordenar arrastrando y soltando.
+ */
 export type LessonType = 'simulation' | 'quiz' | 'theory' | 'drag_drop';
 
+/**
+ * Interfaz principal que define el contenido de una lección.
+ */
 export interface LessonContent {
+    /** Identificador único de la lección. */
     id: string;
+    /** Título de la lección. */
     title: string;
+    /** Tipo de lección. */
     type: LessonType;
+    /** Instrucciones para el usuario. */
     instructions: string;
-    // For simulation type
+
+    // Configuración para el tipo 'simulation'
+    /** Configuración específica para simulaciones. */
     simulationConfig?: {
         type: 'rocket_launch' | 'projectile_motion' | 'free_fall';
         initialCode: string;
@@ -15,14 +31,18 @@ export interface LessonContent {
         errorMessage: string;
         options: { label: string; value: any; code: string }[];
     };
-    // For simple quiz type
+
+    // Configuración para el tipo 'quiz'
+    /** Configuración específica para cuestionarios simples. */
     quizConfig?: {
         question: string;
         options: { id: string; text: string; correct: boolean }[];
         successMessage: string;
         errorMessage: string;
     };
-    // For drag and drop (Sequence Builder)
+
+    // Configuración para el tipo 'drag_drop' (Sequence Builder)
+    /** Configuración específica para ejercicios de arrastrar y soltar. */
     dragDropConfig?: {
         items: { id: string; text: string }[]; // Pool of items
         correctSequence: string[]; // IDs in correct order
@@ -31,19 +51,27 @@ export interface LessonContent {
         successMessage: string;
         errorMessage: string;
     };
-    // For rich theory type
+
+    // Configuración para el tipo 'theory'
+    /** Bloques de contenido para lecciones teóricas. */
     theoryBlocks?: {
         type: 'text' | 'list' | 'alert' | 'header' | 'checklist' | 'true_false';
         content: string | string[]; // For true_false, content is the statement
         style?: 'warning' | 'info';
         answer?: boolean; // For true_false
     }[];
+    /** @deprecated Contenido de teoría legado (cadena simple). */
     theoryContent?: string; // Legacy
+    /** ID de la siguiente lección en la secuencia. */
     nextLessonId?: string;
 }
 
+/**
+ * Base de datos de lecciones disponibles en la aplicación.
+ * Mapea IDs de lección a objetos LessonContent.
+ */
 export const LESSONS_DATA: Record<string, LessonContent> = {
-    // Matches Dashboard generated ID: Category-Topic-study
+    // Coincide con el ID generado en el Dashboard: Category-Topic-study
     'Mecánica-Cinemática-study': {
         id: 'Mecánica-Cinemática-study',
         title: 'Intro a la Cinemática',
@@ -84,7 +112,7 @@ rocket.launch(velocityY);`,
             { type: 'header', content: 'Leyes de Newton' },
             { type: 'text', content: 'Aquí aprenderemos por qué se mueven las cosas.' }
         ],
-        // End of chain for now
+        // Fin de la cadena por ahora
     },
 
     // PYTHON
@@ -168,7 +196,7 @@ rocket.launch(velocityY);`,
                 content: 'Propiedades de un Algoritmo'
             },
             {
-                type: 'checklist', // New type for Checked properties
+                type: 'checklist', // Nuevo tipo para propiedades verificadas
                 content: [
                     'Finito (termina)',
                     'Claro (sin ambigüedad)',
@@ -214,6 +242,6 @@ rocket.launch(velocityY);`,
             successMessage: '¡Excelente! "Cada acción correcta empieza con un buen algoritmo."',
             errorMessage: 'El orden no es correcto. Recuerda: Zapatos -> Llaves -> Abrir -> Salir -> Cerrar.'
         },
-        // End of current path
+        // Fin de la ruta actual
     }
 };

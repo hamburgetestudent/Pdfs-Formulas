@@ -3,10 +3,22 @@ import { BookOpen, Trophy, Zap, User, Terminal } from 'lucide-react';
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
+/**
+ * Función de utilidad para combinar clases de Tailwind de manera condicional y segura.
+ * @param inputs Lista de clases o condiciones.
+ * @returns {string} Cadena de clases combinadas.
+ */
 function cn(...inputs: (string | undefined | null | false)[]) {
     return twMerge(clsx(inputs));
 }
 
+/**
+ * Componente de barra lateral de navegación.
+ * Muestra el logo, enlaces de navegación y un widget de progreso de misión diaria.
+ * Solo visible en pantallas medianas y grandes (hidden md:flex).
+ *
+ * @returns {JSX.Element} La barra lateral de navegación.
+ */
 export function Sidebar() {
     const navItems = [
         { icon: BookOpen, label: "Aprender", to: "/" },

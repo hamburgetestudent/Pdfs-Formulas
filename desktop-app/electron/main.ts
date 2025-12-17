@@ -1,6 +1,10 @@
 import { app, BrowserWindow } from 'electron';
 import path from 'path';
 
+/**
+ * Crea la ventana principal de la aplicación.
+ * Configura el tamaño, preferencias web, estilo de la barra de título y carga la URL o archivo apropiado.
+ */
 function createWindow() {
   const win = new BrowserWindow({
     width: 1200,
@@ -8,18 +12,18 @@ function createWindow() {
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
     },
-    // Modern look
+    // Aspecto moderno
     titleBarStyle: 'hidden', 
     titleBarOverlay: {
-      color: '#1e1e1e', // Dark theme background match
+      color: '#1e1e1e', // Coincide con el fondo del tema oscuro
       symbolColor: '#ffffff',
       height: 35
     },
     backgroundColor: '#1e1e1e',
-    show: false // Wait until ready-to-show to prevent white flash
+    show: false // Esperar hasta que esté listo para mostrarse para evitar un parpadeo blanco
   });
 
-  // Load URL or File
+  // Cargar URL o Archivo
   if (process.env.VITE_DEV_SERVER_URL) {
     win.loadURL(process.env.VITE_DEV_SERVER_URL);
   } else {
@@ -31,6 +35,10 @@ function createWindow() {
   });
 }
 
+/**
+ * Inicializa la aplicación cuando Electron está listo.
+ * Crea la ventana y gestiona la activación en macOS.
+ */
 app.whenReady().then(() => {
   createWindow();
 
@@ -41,6 +49,10 @@ app.whenReady().then(() => {
   });
 });
 
+/**
+ * Maneja el evento cuando todas las ventanas están cerradas.
+ * Cierra la aplicación en sistemas que no sean macOS (darwin).
+ */
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();
