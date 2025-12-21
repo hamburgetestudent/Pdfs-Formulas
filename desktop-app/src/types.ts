@@ -101,7 +101,12 @@ export interface LessonContent {
   // Configuración para el tipo 'drag_drop' (Sequence Builder)
   /** Configuración específica para ejercicios de arrastrar y soltar. */
   dragDropConfig?: {
-    items: { id: string; text: string }[]; // Pool of items
+    items: {
+      id: string;
+      text: string;
+      shape?: 'oval' | 'rectangle' | 'diamond';
+      color?: 'green' | 'blue' | 'orange' | 'amber';
+    }[]; // Pool of items
     correctSequence: string[]; // IDs in correct order
     trapId?: string; // ID of the trap card
     trapMessage?: string; // Message if trap is used/placed first
@@ -112,7 +117,7 @@ export interface LessonContent {
   // Configuración para el tipo 'theory'
   /** Bloques de contenido para lecciones teóricas. */
   theoryBlocks?: {
-    type: 'text' | 'list' | 'alert' | 'header' | 'checklist' | 'true_false' | 'image' | 'code' | 'mermaid';
+    type: 'text' | 'list' | 'alert' | 'header' | 'checklist' | 'true_false' | 'image' | 'code' | 'mermaid' | 'flowchart';
     content: string | string[]; // For true_false, content is the statement
     style?: 'warning' | 'info';
     answer?: boolean; // For true_false
@@ -120,6 +125,8 @@ export interface LessonContent {
     falseLabel?: string; // Custom label for 'False' option
     caption?: string; // For image type
     language?: string; // For code type
+    shape?: 'oval' | 'rectangle' | 'diamond'; // For flowchart type
+    color?: 'green' | 'blue' | 'orange' | 'amber'; // For flowchart type
   }[];
   /** @deprecated Contenido de teoría legado (cadena simple). */
   theoryContent?: string; // Legacy

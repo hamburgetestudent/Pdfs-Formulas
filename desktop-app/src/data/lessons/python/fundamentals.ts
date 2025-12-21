@@ -410,6 +410,222 @@ export const PYTHON_FUNDAMENTALS_DATA: Record<string, LessonContent> = {
             errorMessage: '',
             options: [],
         },
+        nextLessonId: 'Python-Fundamentos-Diagramas-intro',
+    },
+
+    // LECCIÓN: DIAGRAMAS DE FLUJO (NUEVA)
+    'Python-Fundamentos-Diagramas-intro': {
+        id: 'Python-Fundamentos-Diagramas-intro',
+        title: 'El Mapa del Tesoro',
+        type: 'theory',
+        instructions: 'Antes de escribir código, visualizamos el camino.',
+        theoryBlocks: [
+            {
+                type: 'header',
+                content: 'Un Algoritmo es un Mapa',
+            },
+            {
+                type: 'text',
+                content:
+                    'Imagina que quieres encontrar un tesoro. No empiezas a correr a ciegas. Primero miras el mapa.\n\nEn programación, ese mapa se llama **Diagrama de Flujo**.',
+            },
+            {
+                type: 'flowchart',
+                shape: 'oval',
+                color: 'green',
+                content: 'Inicio',
+            },
+            {
+                type: 'flowchart',
+                shape: 'rectangle',
+                color: 'blue',
+                content: 'Caminar 10 pasos',
+            },
+            {
+                type: 'flowchart',
+                shape: 'rectangle',
+                color: 'blue',
+                content: 'Girar a la derecha',
+            },
+            {
+                type: 'flowchart',
+                shape: 'oval',
+                color: 'green',
+                content: 'Llegar al tesoro',
+            },
+            {
+                type: 'text',
+                content: '¿Ves cómo aparecen paso a paso? Así piensa el computador.',
+            },
+        ],
+        nextLessonId: 'Python-Fundamentos-Diagramas-shapes',
+    },
+    'Python-Fundamentos-Diagramas-shapes': {
+        id: 'Python-Fundamentos-Diagramas-shapes',
+        title: 'Las Formas del Mapa',
+        type: 'theory',
+        instructions: 'En los diagramas, cada forma tiene un significado sagrado.',
+        theoryBlocks: [
+            {
+                type: 'header',
+                content: 'Diccionario Visual',
+            },
+            {
+                type: 'flowchart',
+                shape: 'oval',
+                color: 'green',
+                content: 'INICIO / FIN',
+                caption: 'El Óvalo Verde: Indica dónde empieza y termina todo.',
+            },
+            {
+                type: 'flowchart',
+                shape: 'rectangle',
+                color: 'blue',
+                content: 'ACCIÓN',
+                caption: 'El Rectángulo Azul: Algo que haces (Correr, Calcular, Mostrar).',
+            },
+            {
+                type: 'flowchart',
+                shape: 'diamond',
+                color: 'amber',
+                content: 'DECISIÓN',
+                caption: 'El Rombo Naranja: Una pregunta de SÍ o NO.',
+            },
+        ],
+        nextLessonId: 'Python-Fundamentos-Diagramas-arrows',
+    },
+    'Python-Fundamentos-Diagramas-arrows': {
+        id: 'Python-Fundamentos-Diagramas-arrows',
+        title: 'El Flujo (Flow)',
+        type: 'theory',
+        instructions: 'La magia está en las flechas que conectan todo.',
+        theoryBlocks: [
+            {
+                type: 'header',
+                content: 'Sigue la Flecha',
+            },
+            {
+                type: 'text',
+                content: 'El computador sigue las flechas. Nunca salta pasos. Mira este flujo simple:',
+            },
+            {
+                type: 'flowchart',
+                shape: 'oval',
+                color: 'green',
+                content: 'Inicio',
+            },
+            {
+                type: 'flowchart',
+                shape: 'rectangle',
+                color: 'blue',
+                content: 'Saludar',
+            },
+            {
+                type: 'flowchart',
+                shape: 'oval',
+                color: 'green',
+                content: 'Fin',
+            },
+            {
+                type: 'alert',
+                style: 'info',
+                content: 'Si cortas una flecha, el programa se detiene (o explota 💥).',
+            },
+        ],
+        nextLessonId: 'Python-Fundamentos-Diagramas-build',
+    },
+    'Python-Fundamentos-Diagramas-build': {
+        id: 'Python-Fundamentos-Diagramas-build',
+        title: 'Tu Primer Diagrama',
+        type: 'drag_drop',
+        instructions: 'Construye el diagrama para "Plantar un Árbol".',
+        dragDropConfig: {
+            items: [
+                { id: '1', text: 'INICIO', shape: 'oval', color: 'green' },
+                { id: '2', text: 'Cavar hoyo', shape: 'rectangle', color: 'blue' },
+                { id: '3', text: 'Poner semilla', shape: 'rectangle', color: 'blue' },
+                { id: '4', text: 'Tapar con tierra', shape: 'rectangle', color: 'blue' },
+                { id: '5', text: 'FIN', shape: 'oval', color: 'green' },
+                { id: 'trap', text: 'Comer la semilla', shape: 'rectangle', color: 'orange' },
+            ],
+            correctSequence: ['1', '2', '3', '4', '5'],
+            trapId: 'trap',
+            trapMessage: '¡Te comiste la semilla! Ahora no crecerá nada. 🌳🚫',
+            successMessage: '¡Excelente! Has creado tu primer algoritmo visual. 🎨✨',
+            errorMessage: 'Recuerda: Todo empieza en INICIO y termina en FIN.',
+        },
+        nextLessonId: 'Python-Fundamentos-Introducción al Pseudocódigo-intro',
+    },
+
+    // LECCIÓN: INTRODUCCIÓN AL PSEUDOCÓDIGO
+    'Python-Fundamentos-Introducción al Pseudocódigo-intro': {
+        id: 'Python-Fundamentos-Introducción al Pseudocódigo-intro',
+        title: 'El Código no es Magia',
+        type: 'theory',
+        instructions: 'Descubre el secreto de los programadores.',
+        theoryBlocks: [
+            {
+                type: 'header',
+                content: 'El Traductor Alienígena 👽',
+            },
+            {
+                type: 'text',
+                content:
+                    'Mucha gente cree que programar es hacer magia, pero no. Es simplemente aprender un idioma nuevo.\n\nImagina que tu computadora es un alienígena muy obediente, pero que no habla español. Necesitas un "Traductor" para darle instrucciones.',
+            },
+            {
+                type: 'alert',
+                style: 'info',
+                content: 'Ese traductor es el Lenguaje de Programación (como Python).',
+            },
+        ],
+        nextLessonId: 'Python-Fundamentos-Introducción al Pseudocódigo-game',
+    },
+
+    'Python-Fundamentos-Introducción al Pseudocódigo-game': {
+        id: 'Python-Fundamentos-Introducción al Pseudocódigo-game',
+        title: 'Minijuego: Lógica Alienígena',
+        type: 'quiz',
+        instructions: 'Analiza la instrucción y predice el futuro.',
+        quizConfig: {
+            question: 'Si le das esta orden al alien: "Si (llueve) -> abrir_paraguas()"',
+            options: [
+                { id: 'A', text: 'El alien hace que empiece a llover (Magia)', correct: false },
+                { id: 'B', text: 'El alien abre el paraguas, pero SOLO si está lloviendo', correct: true },
+                { id: 'C', text: 'El alien cierra el paraguas inmediatamente', correct: false },
+            ],
+            successMessage: '¡Exacto! No es magia. Es una condición simple: Solo actúas si la condición se cumple.',
+            errorMessage: 'Recuerda: El código no controla el clima, solo reacciona a él.',
+        },
+        nextLessonId: 'Python-Fundamentos-Introducción al Pseudocódigo-grammar',
+    },
+
+    'Python-Fundamentos-Introducción al Pseudocódigo-grammar': {
+        id: 'Python-Fundamentos-Introducción al Pseudocódigo-grammar',
+        title: 'Actividad: Gramática de Colores',
+        type: 'theory',
+        instructions: 'Aprende a ver los colores del código.',
+        theoryBlocks: [
+            {
+                type: 'header',
+                content: 'Acciones y Cosas',
+            },
+            {
+                type: 'text',
+                content:
+                    'Para leer código, imagina que usas lentes especiales que colorean las palabras:\n\n🔵 **ACCIONES (Verbos)**: Lo que se hace (correr, abrir, comer).\n🔴 **COSAS (Objetos)**: A quién se le hace (puerta, pizza, paraguas).',
+            },
+            {
+                type: 'code',
+                language: 'python',
+                content: '# Imagina: abrir es AZUL, puerta es ROJO\n\nabrir( puerta )',
+            },
+            {
+                type: 'alert',
+                style: 'info',
+                content: 'Reto Mental: En la frase "encender(luz)", ¿De qué color pintarías "encender"?',
+            },
+        ],
         nextLessonId: 'Python-Fundamentos-Introducción al Pseudocódigo-study',
     },
 
@@ -431,9 +647,9 @@ export const PYTHON_FUNDAMENTALS_DATA: Record<string, LessonContent> = {
                     'Antes de escribir código real (que puede ser difícil), los programadores escribimos "Pseudocódigo".\n\nEs como un borrador en tu propio idioma, sin reglas estrictas, para ordenar tus ideas.',
             },
             {
-                type: 'image',
-                content: '/images/pseudocode_intro.png', // Placeholder, user can replace later or generate
-                caption: 'Mitad humano, mitad robot.',
+                type: 'code',
+                language: 'python',
+                content: '# --- INTENCION HUMANA ---\n"Quiero un café"\n\n# --- PSEUDOCODIGO ---\n1. Calentar agua\n2. Poner café en la taza\n3. Servir agua',
             },
             {
                 type: 'alert',
@@ -460,15 +676,11 @@ export const PYTHON_FUNDAMENTALS_DATA: Record<string, LessonContent> = {
                     'En programación, "SI" no es una afirmación, es una pregunta. Funciona como un filtro de seguridad.\n\nSolo te deja pasar si la condición es VERDADERA.',
             },
             {
-                type: 'image',
-                content: '/images/security_guard.png',
-                caption: 'El guardia pregunta: "¿Tienes entrada?"',
-            },
-            {
                 type: 'code',
                 language: 'python',
-                content: 'SI (tienes_entrada)',
+                content: '# EL GUARDIA DEL CLUB\n\nSI ( entrada_en_mano == VERDADERO ):\n    # CONDICION CUMPLIDA\n    ENTONCES( "¡Pasar al Club!" )',
             },
+
         ],
         nextLessonId: 'Python-Fundamentos-Introducción al Pseudocódigo-2',
     },
@@ -489,15 +701,11 @@ export const PYTHON_FUNDAMENTALS_DATA: Record<string, LessonContent> = {
                     'Es el conector mágico. Une la pregunta del guardia con la acción inmediata.\n\nEs lo que sucede automáticamente si el "SI" resultó ser verdad.',
             },
             {
-                type: 'image',
-                content: '/images/traffic_green_light.png',
-                caption: 'Si es verde -> ENTONCES avanzas.',
-            },
-            {
                 type: 'code',
                 language: 'python',
-                content: 'ENTONCES (puedes_pasar)',
+                content: '# EL SEMAFORO\n\nSI ( luz == VERDE ):\n    # CONSECUENCIA DIRECTA\n    ENTONCES( "Acelerar el auto 🚗" )',
             },
+
         ],
         nextLessonId: 'Python-Fundamentos-Introducción al Pseudocódigo-3',
     },
@@ -518,15 +726,11 @@ export const PYTHON_FUNDAMENTALS_DATA: Record<string, LessonContent> = {
                     '"SINO" significa "De lo contrario". Es el camino alternativo que tomas solo cuando el "SI" te dice que no.',
             },
             {
-                type: 'image',
-                content: '/images/road_detour.png',
-                caption: 'Camino cerrado -> SINO -> Toma el desvío.',
-            },
-            {
                 type: 'code',
                 language: 'python',
-                content: 'SINO (vuelve_a_casa)',
+                content: '# EL CAMINO\n\nSI ( camino_libre == VERDADERO ):\n   ENTONCES( "Seguir derecho" )\n\nSINO:\n   # ALTERNATIVA OBLIGATORIA\n   ENTONCES( "Tomar el desvío 🚧" )',
             },
+
         ],
         nextLessonId: 'Python-Fundamentos-Introducción al Pseudocódigo-4',
     },
@@ -546,11 +750,7 @@ export const PYTHON_FUNDAMENTALS_DATA: Record<string, LessonContent> = {
                 content:
                     'Así se ordenan estas 3 palabras para tomar decisiones inteligentes.',
             },
-            {
-                type: 'image',
-                content: '/images/pseudocode_structure.png',
-                caption: 'Estructura lógica: SI -> ENTONCES / SINO',
-            },
+
             {
                 type: 'mermaid',
                 content: 'graph TD\nA[SI: ¿Pregunta?] -->|Verdad| B[ENTONCES: Acción A]\nA -->|Falso| C[SINO: Acción B]',

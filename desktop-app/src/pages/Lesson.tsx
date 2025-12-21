@@ -1,4 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
+import { motion } from 'framer-motion';
+import FlowChartBlock from '../components/FlowChartBlock';
+
 import {
   Rocket,
   CheckCircle,
@@ -844,17 +847,27 @@ export default function Lesson() {
                         <button
                           key={item.id}
                           onClick={() => addToSequence(item.id)}
-                          className={`w-full p-4 bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-xl text-left transition-all active:scale-95 flex justify-between items-center group relative ${isDevMode ? 'pl-10' : ''}`}
+                          className={`w-full p-2 bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-xl text-left transition-all active:scale-95 flex justify-between items-center group relative ${isDevMode ? 'pl-10' : ''}`}
                         >
                           {isDevMode && correctIndex !== -1 && (
                             <div className="absolute left-2 top-1/2 -translate-y-1/2 w-6 h-6 bg-purple-500/20 border border-purple-500 text-purple-400 rounded flex items-center justify-center text-xs font-bold">
                               {correctIndex + 1}
                             </div>
                           )}
-                          <span className="font-medium text-gray-200">{item.text}</span>
+
+                          <div className="flex-1 flex justify-center">
+                            {item.shape ? (
+                              <div className="scale-75 origin-center">
+                                <FlowChartBlock text={item.text} shape={item.shape} color={item.color} />
+                              </div>
+                            ) : (
+                              <span className="font-medium text-gray-200">{item.text}</span>
+                            )}
+                          </div>
+
                           <MoveRight
                             size={16}
-                            className="text-gray-500 group-hover:text-cyan-400 transition-colors"
+                            className="text-gray-500 group-hover:text-cyan-400 transition-colors ml-4"
                           />
                         </button>
                       );
@@ -869,31 +882,59 @@ export default function Lesson() {
               </div>
 
               {/* Secuencia */}
-              <div className="flex-1 bg-gray-900/50 rounded-2xl p-6 border-2 border-dashed border-gray-700 min-h-[300px] shadow-inner">
-                <h3 className="text-purple-400 font-bold mb-4 uppercase text-xs tracking-wider flex items-center gap-2">
+              <div
+                className={`flex-1 bg-gray-900/50 rounded-2xl p-6 border-2 border-dashed transition-all duration-500 min-h-[300px] shadow-inner relative overflow-hidden ${showFeedback === 'success'
+                  ? 'border-green-400 shadow-[0_0_30px_rgba(74,222,128,0.3)] bg-green-900/10'
+                  : 'border-gray-700'
+                  }`}
+              >
+                {showFeedback === 'success' && (
+                  <div className="absolute inset-0 z-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/diagmonds-light.png')] animate-pulse"></div>
+                )}
+
+                <h3 className="text-purple-400 font-bold mb-4 uppercase text-xs tracking-wider flex items-center gap-2 relative z-10">
                   Tu Algoritmo{' '}
                   <span className="text-gray-600 text-[10px]">(Orden de ejecución)</span>
                 </h3>
-                <div className="space-y-3">
+                <div className="space-y-0 relative z-10">
                   {userSequence.map((seqId, idx) => {
                     const item = lesson.dragDropConfig?.items.find((i) => i.id === seqId);
                     return (
-                      <div
-                        key={seqId}
-                        className="w-full p-4 bg-purple-900/20 border border-purple-500/30 rounded-xl flex justify-between items-center animate-in slide-in-from-left-2 fade-in duration-300"
-                      >
-                        <div className="flex items-center gap-3">
-                          <span className="bg-purple-900 text-purple-200 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold">
-                            {idx + 1}
-                          </span>
-                          <span className="font-medium text-purple-100">{item?.text}</span>
-                        </div>
-                        <button
-                          onClick={() => removeFromSequence(seqId)}
-                          className="text-gray-400 hover:text-red-400 p-1 hover:bg-red-500/10 rounded-lg transition-colors"
+                      <div key={seqId} className="flex flex-col items-center">
+                        {/* Connector Line from previous item */}
+                        {idx > 0 && (
+                          <div className={`w-0.5 h-6 transition-colors duration-500 ${showFeedback === 'success' ? 'bg-green-500 shadow-[0_0_10px_#22c55e]' : 'bg-gray-700'}`}></div>
+                        )}
+
+                        <div
+                          className={`w-full p-4 border rounded-xl flex justify-between items-center animate-in slide-in-from-left-2 fade-in duration-300 transition-all ${showFeedback === 'success'
+                            ? 'bg-green-900/40 border-green-500 text-green-100'
+                            : 'bg-purple-900/20 border-purple-500/30 text-purple-100 hover:bg-purple-900/30'
+                            }`}
                         >
-                          <XIcon size={16} />
-                        </button>
+                          <div className="flex items-center gap-3 w-full">
+                            <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold transition-colors shrink-0 ${showFeedback === 'success' ? 'bg-green-500 text-white' : 'bg-purple-900 text-purple-200'
+                              }`}>
+                              {idx + 1}
+                            </span>
+
+                            <div className="flex-1 flex justify-center">
+                              {item?.shape ? (
+                                <div className="scale-75 origin-center">
+                                  <FlowChartBlock text={item.text} shape={item.shape} color={item.color} />
+                                </div>
+                              ) : (
+                                <span className="font-medium">{item?.text}</span>
+                              )}
+                            </div>
+                          </div>
+                          <button
+                            onClick={() => removeFromSequence(seqId)}
+                            className="text-gray-400 hover:text-red-400 p-1 hover:bg-red-500/10 rounded-lg transition-colors ml-4"
+                          >
+                            <XIcon size={16} />
+                          </button>
+                        </div>
                       </div>
                     );
                   })}
@@ -918,7 +959,7 @@ export default function Lesson() {
           {lesson.type === 'theory' && (
             <div className="flex flex-col gap-6">
               {lesson.theoryBlocks ? (
-                lesson.theoryBlocks.map((block, idx) => {
+                lesson.theoryBlocks.map((block, idx, blocks) => {
                   switch (block.type) {
                     case 'text':
                       return (
@@ -940,17 +981,40 @@ export default function Lesson() {
                         >
                           <ul className="space-y-4">
                             {(block.content as string[]).map((item, itemIdx) => (
-                              <li
+                              <motion.li
                                 key={itemIdx}
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: itemIdx * 0.2, duration: 0.5 }}
                                 className="flex items-center gap-4 text-lg text-gray-300"
                               >
                                 <span className="bg-cyan-900 text-cyan-400 w-8 h-8 flex items-center justify-center rounded-full font-bold flex-shrink-0">
                                   {itemIdx + 1}
                                 </span>
                                 {item}
-                              </li>
+                              </motion.li>
                             ))}
                           </ul>
+                        </div>
+                      );
+                    case 'flowchart':
+                      const showLine = idx > 0 && blocks[idx - 1].type === 'flowchart';
+                      return (
+                        <div key={idx} className="flex flex-col items-center gap-4 my-1 relative">
+                          {/* Línea vertical de conexión (smart stack) */}
+                          {showLine && (
+                            <div className="absolute -top-6 left-1/2 w-0.5 h-6 bg-gray-600"></div>
+                          )}
+                          <FlowChartBlock
+                            text={block.content as string}
+                            shape={block.shape}
+                            color={block.color}
+                          />
+                          {block.caption && (
+                            <p className="text-gray-400 text-sm mt-2 text-center max-w-xs">
+                              {block.caption}
+                            </p>
+                          )}
                         </div>
                       );
                     case 'checklist':
@@ -1049,6 +1113,37 @@ export default function Lesson() {
                               {block.caption}
                             </p>
                           )}
+                        </div>
+                      );
+                    case 'code':
+                      const codeContent = block.content as string;
+                      // Split by keywords but keep them captured in the array
+                      const parts = codeContent.split(/(\bSI\b|\bENTONCES\b|\bSINO\b|#.*)/g);
+
+                      return (
+                        <div key={idx} className="bg-[#1e1e1e] p-6 rounded-xl border border-gray-800 font-mono text-gray-300 my-6 shadow-2xl relative overflow-hidden text-sm md:text-base">
+                          {/* Top Highlight Line */}
+                          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-500 to-transparent opacity-50"></div>
+
+                          <pre className="whitespace-pre-wrap font-inherit">
+                            {parts.map((part, i) => {
+                              if (['SI', 'ENTONCES', 'SINO'].includes(part)) {
+                                return (
+                                  <span key={i} className="text-green-400 font-bold drop-shadow-[0_0_8px_rgba(74,222,128,0.5)]">
+                                    {part}
+                                  </span>
+                                );
+                              }
+                              if (part.trim().startsWith('#')) {
+                                return (
+                                  <span key={i} className="text-gray-500 italic">
+                                    {part}
+                                  </span>
+                                );
+                              }
+                              return part;
+                            })}
+                          </pre>
                         </div>
                       );
                     default:
