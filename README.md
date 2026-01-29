@@ -1,4 +1,4 @@
-# Herramienta de Estudio: Física & Python 🚀
+# Herramienta de Estudio: Física & Python 🚀 hecha meramente por vibe coding , logica debil
 
 ¡Bienvenido a la aplicación definitiva para dominar la Física y la Programación! Tras una migración completa, esta herramienta de escritorio ahora funciona sobre una arquitectura moderna basada en **Electron**, **React 19** y **TypeScript**.
 
